@@ -1,0 +1,26 @@
+[
+    {
+        "id": "frenchDeptNames",
+        "label": "Les noms de départements français",
+        "image": "affiche-departements-francais.jpg",
+        "geojson": "departements.geojson",
+        "field": "nom",
+        "typeLabel": "le département"
+    },
+    {
+        "id": "frenchDeptNums",
+        "label": "Les numéros de départements français",
+        "image": "plaque-numero.jpg",
+        "geojson": "departements.geojson",
+        "field": "code",
+        "typeLabel": "le département"
+    },
+    {
+        "id": "usStateNames",
+        "label": "Les noms des Etats-Unis",
+        "image": "iStock-532961103.webp",
+        "geojson": "us-states.geojson",
+        "field": "name",
+        "typeLabel": "l'état"
+    }
+]
