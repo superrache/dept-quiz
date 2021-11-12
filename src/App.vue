@@ -136,4 +136,22 @@ h1 {
   height: 70%;
 }
 
+
+button {
+  background: #5eb793;
+  background-image: linear-gradient(to bottom, #34d98f, #006141);
+  border-radius: 11px;
+  padding: 0px 20px 0px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5em;
+}
+
+button:hover {
+  background: #5eb793;
+  background-image: linear-gradient(to bottom, #35bf65, #104d3b);
+  text-decoration: none;
+}
+
 </style>

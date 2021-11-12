@@ -20,7 +20,7 @@
         "label": "Les noms des Etats-Unis",
         "image": "iStock-532961103.webp",
         "geojson": "us-states.geojson",
-        "field": "name",
+        "field": "NAME",
         "typeLabel": "l'état"
     }
 ]

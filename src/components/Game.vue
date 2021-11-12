@@ -19,12 +19,14 @@
           <div id="score">
               <h2>{{ score }} / {{ solutionIds.length }}</h2>
           </div>
+          <button id="restart" v-on:click="restart()">Restart</button>
           <button id="quit" v-on:click="quit()">Quit</button>
           <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
         </div>
 
-      <Highscores id="highscores" ref="highscores"/>
 
+      <Highscores id="highscores" ref="highscores"/>
+      <SaveScore id="savescore" ref="savescore"/>
     </div>
  
 </template>
@@ -34,8 +36,8 @@ import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
 import L from "leaflet";
 import { featureGroup } from "leaflet"
 import "leaflet/dist/leaflet.css";
-//import Button from './Button.vue'
 import Highscores from './Highscores.vue'
+import SaveScore from './SaveScore.vue'
 
 L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.3.4/dist/images/";
 
@@ -45,8 +47,8 @@ export default {
     "l-map": LMap,
     "l-tile-layer": LTileLayer,
     LGeoJson,
-    //Button,
-    Highscores
+    Highscores,
+    SaveScore
   },
   data() {
     return {
@@ -94,9 +96,9 @@ export default {
       this.game = game
       console.log('starting game ' + this.game.id)
       
-      /*await this.load()
+      await this.load()
       this.shufflize()
-      this.start()*/
+      this.start()
     },
     async load() {
       console.log('loading geojson ' + this.game.geojson)
@@ -184,17 +186,22 @@ export default {
         
       }
       this.next()
+      //this.end()
     },
     end() {
       console.log('end of game')
       this.result = "Game over"
 
       // save high score
-
+      this.$refs.savescore.show(this.game, this.score)
     },
     quit() {
       console.log('quit game')
       this.$parent.quitGame()
+    },
+    restart() {
+      console.log('restart')
+      this.launch(this.game)
     },
     showHighscores() {
       this.$refs.highscores.show(this.game)
@@ -241,23 +248,6 @@ h1 {
   color: #5eb793;
 }
 
-button {
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #34d98f, #006141);
-  border-radius: 11px;
-  padding: 0px 20px 0px 20px;
-  text-decoration: none;
-  cursor: pointer;
-  color: white;
-  font-size: 1.5em;
-}
-
-button:hover {
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #35bf65, #104d3b);
-  text-decoration: none;
-}
-
 #map {
   margin-left: 350px;
   width: 100% - 350px;
@@ -301,19 +291,42 @@ button:hover {
   animation: scoreAnimation 0.5s infinte;
 }
 
+#restart {
+  position: absolute;
+  left: 20px;
+  width: 310px;
+  bottom: 120px;
+}
+
 #quit {
   position: absolute;
   left: 20px;
   bottom: 20px;
+  width: 310px;
 }
 
 #showHighscores {
   position: absolute;
-  left: 170px;
-  bottom: 20px;
+  left: 20px;
+  bottom: 70px;
+  width: 310px;
 }
 
 #highscores {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  bottom: 0;
+  right: 0;
+  z-index: 2000;
+  background-color: rgb(0, 0, 0, 0.8);
+  /*visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  transition: .64s ease-in-out;*/
+}
+
+#savescore {
   position: fixed;
   width: 100vw;
   height: 100vh;
