@@ -18,6 +18,7 @@
     </div>
 
     <Game ref="game" v-show="showGame"/>
+
   </div>
 </template>
 
@@ -119,7 +120,7 @@ h1 {
 }
 
 .game:hover {
-  background-color: #5eb79330;
+  background-color: #5eb79360;
 }
 
 .game:active {

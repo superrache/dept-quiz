@@ -17,6 +17,7 @@
     "fs": "0.0.1-security",
     "leaflet": "^1.7.1",
     "maplibre-gl": "^2.0.0-pre.1",
+    "sqlite3": "^5.0.2",
     "vue": "^2.6.11",
     "vue2-leaflet": "^2.7.1"
   },

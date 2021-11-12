@@ -19,15 +19,23 @@
           <div id="score">
               <h2>{{ score }} / {{ solutionIds.length }}</h2>
           </div>
-          <div id="quit" v-on:click="quit()"><h2>Quitter</h2></div>
+          <button id="quit" v-on:click="quit()">Quit</button>
+          <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
         </div>
+
+      <Highscores id="highscores" ref="highscores"/>
+
     </div>
+ 
 </template>
 
 <script>
 import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
 import L from "leaflet";
+import { featureGroup } from "leaflet"
 import "leaflet/dist/leaflet.css";
+//import Button from './Button.vue'
+import Highscores from './Highscores.vue'
 
 L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.3.4/dist/images/";
 
@@ -36,7 +44,9 @@ export default {
   components: {
     "l-map": LMap,
     "l-tile-layer": LTileLayer,
-    LGeoJson
+    LGeoJson,
+    //Button,
+    Highscores
   },
   data() {
     return {
@@ -49,9 +59,9 @@ export default {
       solutionIds: [],
       current: 0,
       dispGeojson: true,
-      fillColor: "#e4ce7f",
-      zoom: 6,
-      center: { lat: 46.995, lng: 2.373 },
+      map: null,
+      zoom: 2,
+      center: { lat: 0, lng: 0 },
       url: "http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -64,38 +74,29 @@ export default {
           };
       },
       styleFunction() {
-        const fillColor = this.fillColor; // important! need touch fillColor in computed for re-calculate when change fillColor
         return () => {
-          //console.log("props " + feature.properties)
           return {
             weight: 2,
             color: "#ECEFF1",
             opacity: 1,
-            fillColor: fillColor,
+            fillColor: "#e4ce7f",
             fillOpacity: 0.5
           };
         };
-      },
-      onEachFeature() {
-        const _this = this
-        return (feature, layer) => {
-          layer.on('click', function() {
-            console.log('click on ' + feature.properties[_this.game.field])
-            _this.onClic(feature.properties[_this.game.field])
-          })
-        }
-      },
+      }
   },
   created() {
     this.question = "loading"
+    
   },
   methods: {
     async launch(game) {
       this.game = game
       console.log('starting game ' + this.game.id)
-      await this.load()
+      
+      /*await this.load()
       this.shufflize()
-      this.start()
+      this.start()*/
     },
     async load() {
       console.log('loading geojson ' + this.game.geojson)
@@ -132,6 +133,17 @@ export default {
       this.result = "Sélectionne " + this.game.typeLabel + " sur la carte"
       this.current = -1
       this.score = 0
+
+      // zoom sur toutes les entités
+      this.map = this.$refs.map // ne fonctionne pas en created()
+      var group = new featureGroup()
+      this.map.mapObject.eachLayer(function(layer) {
+        if(layer.feature != undefined) {
+          group.addLayer(layer)
+        }
+      })
+      this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
+
       this.next()
     },
     next() {
@@ -144,13 +156,32 @@ export default {
         this.question = "Où est " + this.game.typeLabel + " " + this.departmentName + " ?"
       }
     },
-    onClic(name) {
+    onClic(name, layer) {
       if(this.departmentName === name) {
         this.result = "Correct"
         this.score++
-        //feature.properties.won = true
+        layer.feature.properties.won = true
+        layer.setStyle({fillColor: "green"})
+
+        // zoom sur cette feature
+        //const bounds = [[layer._bounds._southWest.lat, layer._bounds._southWest.lng], [layer._bounds._northEast.lat, layer._bounds._northEast.lng]]
+        //this.map.mapObject.flyToBounds(bounds, { padding: [20, 20]})
       } else {
         this.result = name
+        layer.setStyle({fillColor: "red"})
+        
+        // zoom sur la bonne feature, à déterminer
+        var group = new featureGroup()
+        this.map.mapObject.eachLayer(function(layer) {
+          if(layer.feature != undefined && layer.feature.properties[this.game.field] === this.departmentName) {
+            console.log(layer)
+            group.addLayer(layer)
+            layer.setStyle({fillColor: "orange"})
+          }
+        }.bind(this))
+        console.log(group.getBounds())
+        this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
+        
       }
       this.next()
     },
@@ -158,12 +189,32 @@ export default {
       console.log('end of game')
       this.result = "Game over"
 
-      // TODO save high score
+      // save high score
+
     },
     quit() {
       console.log('quit game')
       this.$parent.quitGame()
-      
+    },
+    showHighscores() {
+      this.$refs.highscores.show(this.game)
+    },
+    onEachFeature(feature, layer) {
+      const self = this
+
+      layer.on('mouseover', function() {
+        this.setStyle({fillColor: "#e4ce30"})
+      })
+
+      layer.on('mouseout', function() {
+        if(this.feature.properties.won) this.setStyle({fillColor: "green"}) 
+        else this.setStyle({fillColor: "#e4ce7f"})
+      })
+
+      layer.on('click', function() {
+        console.log('click on ' + feature.properties[self.game.field])
+        self.onClic(feature.properties[self.game.field], this)
+      })
     }
   }
 }
@@ -188,6 +239,23 @@ a {
 
 h1 {
   color: #5eb793;
+}
+
+button {
+  background: #5eb793;
+  background-image: linear-gradient(to bottom, #34d98f, #006141);
+  border-radius: 11px;
+  padding: 0px 20px 0px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5em;
+}
+
+button:hover {
+  background: #5eb793;
+  background-image: linear-gradient(to bottom, #35bf65, #104d3b);
+  text-decoration: none;
 }
 
 #map {
@@ -237,18 +305,26 @@ h1 {
   position: absolute;
   left: 20px;
   bottom: 20px;
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #34d98f, #006141);
-  border-radius: 11px;
-  padding: 0px 20px 0px 20px;
-  text-decoration: none;
-  cursor: pointer;
 }
 
-#quit:hover {
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #35bf65, #104d3b);
-  text-decoration: none;
+#showHighscores {
+  position: absolute;
+  left: 170px;
+  bottom: 20px;
+}
+
+#highscores {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  bottom: 0;
+  right: 0;
+  z-index: 2000;
+  background-color: rgb(0, 0, 0, 0.8);
+  /*visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  transition: .64s ease-in-out;*/
 }
 
 </style>
