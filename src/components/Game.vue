@@ -16,14 +16,19 @@
           <div id="result">
               <h2>{{ result }}</h2>
           </div>
+          <div id="progression">
+            <h2>{{ current }} / {{ solutionIds.length }}</h2>
+          </div>
           <div id="score">
-              <h2>{{ score }} / {{ solutionIds.length }}</h2>
+              <h2>Score : {{ score }}</h2>
+          </div>
+          <div id="bonus">
+              <h2>Bonus {{ bonus }}%</h2>
           </div>
           <button id="restart" v-on:click="restart()">Restart</button>
           <button id="quit" v-on:click="quit()">Quit</button>
           <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
         </div>
-
 
       <Highscores id="highscores" ref="highscores"/>
       <SaveScore id="savescore" ref="savescore"/>
@@ -56,6 +61,8 @@ export default {
       question: "",
       result: "",
       score: 0,
+      bonus: 0,
+      playing: false,
       departmentName: "",
       geojson: null,
       solutionIds: [],
@@ -134,7 +141,10 @@ export default {
       console.log('game start')
       this.result = "Sélectionne " + this.game.typeLabel + " sur la carte"
       this.current = -1
+      this.progression = 0
       this.score = 0
+      this.bonus = 100
+      this.playing = true
 
       // zoom sur toutes les entités
       this.map = this.$refs.map // ne fonctionne pas en created()
@@ -159,38 +169,43 @@ export default {
       }
     },
     onClic(name, layer) {
-      if(this.departmentName === name) {
-        this.result = "Correct"
-        this.score++
-        layer.feature.properties.won = true
-        layer.setStyle({fillColor: "green"})
+      if(this.playing) {
+        if(this.departmentName === name) {
+          this.result = "Correct"
+          this.score += this.bonus
+          this.bonus += 20
+          layer.feature.properties.won = true
+          layer.setStyle({fillColor: "green"})
 
-        // zoom sur cette feature
-        //const bounds = [[layer._bounds._southWest.lat, layer._bounds._southWest.lng], [layer._bounds._northEast.lat, layer._bounds._northEast.lng]]
-        //this.map.mapObject.flyToBounds(bounds, { padding: [20, 20]})
-      } else {
-        this.result = name
-        layer.setStyle({fillColor: "red"})
-        
-        // zoom sur la bonne feature, à déterminer
-        var group = new featureGroup()
-        this.map.mapObject.eachLayer(function(layer) {
-          if(layer.feature != undefined && layer.feature.properties[this.game.field] === this.departmentName) {
-            console.log(layer)
-            group.addLayer(layer)
-            layer.setStyle({fillColor: "orange"})
-          }
-        }.bind(this))
-        console.log(group.getBounds())
-        this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
-        
+          // zoom sur cette feature
+          //const bounds = [[layer._bounds._southWest.lat, layer._bounds._southWest.lng], [layer._bounds._northEast.lat, layer._bounds._northEast.lng]]
+          //this.map.mapObject.flyToBounds(bounds, { padding: [20, 20]})
+        } else {
+          this.result = "Incorrect (" + name + ")"
+          this.bonus = 100
+          layer.setStyle({fillColor: "red"})
+          
+          // zoom sur la bonne feature, à déterminer
+          var group = new featureGroup()
+          this.map.mapObject.eachLayer(function(layer) {
+            if(layer.feature != undefined && layer.feature.properties[this.game.field] === this.departmentName) {
+              console.log(layer)
+              group.addLayer(layer)
+              layer.setStyle({fillColor: "orange"})
+            }
+          }.bind(this))
+          console.log(group.getBounds())
+          this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
+          
+        }
+        this.next()
+        //this.end()
       }
-      this.next()
-      //this.end()
     },
     end() {
       console.log('end of game')
       this.result = "Game over"
+      this.playing = false
 
       // save high score
       this.$refs.savescore.show(this.game, this.score)
@@ -245,6 +260,10 @@ a {
 }
 
 h1 {
+  color: #b6ffeb;
+}
+
+#result {
   color: #5eb793;
 }
 
@@ -274,12 +293,22 @@ h1 {
 
 @keyframes resultAnimation {
   0% { opacity: 1; }
-  50% { opacity: 0; }
+  50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
 
 #result {
   animation: resultAnimation 1.5s infinite;
+}
+
+@keyframes bonusAnimation {
+  0% { font-size: 1em; }
+  50% { font-size: 1.3em; }
+  100% { font-size: 1em; }
+}
+
+#bonus {
+  animation: bonusAnimation 1s infinite;
 }
 
 @keyframes scoreAnimation {
