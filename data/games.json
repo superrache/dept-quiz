@@ -22,5 +22,21 @@
         "geojson": "us-states.geojson",
         "field": "NAME",
         "typeLabel": "l'état"
+    },
+    {
+        "id": "rdCongoProvNames",
+        "label": "Les provinces de la République Démocratique du Congo",
+        "image": "congo.webp",
+        "geojson": "rd_congo_admin_4_provinces.geojson",
+        "field": "name",
+        "typeLabel": "la province"
+    },
+    {
+        "id": "city44",
+        "label": "Les communes en Loire-Atlantique",
+        "image": "Loire-Atlantique.jpg",
+        "geojson": "communes-44-loire-atlantique.geojson",
+        "field": "nom",
+        "typeLabel": "la commune"
     }
 ]
