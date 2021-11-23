@@ -9,7 +9,7 @@
     "express": "vue-cli-service express:watch",
     "express:run": "vue-cli-service express:run",
     "dev": "npm run express & npm run serve",
-    "start": "npm run build & npm run express:run & node static.js"
+    "start": "node server.prod.js & node static.js"
   },
   "dependencies": {
     "@vue/cli": "^4.5.15",
