@@ -8,9 +8,10 @@
     "lint": "vue-cli-service lint",
     "express": "vue-cli-service express:watch",
     "express:run": "vue-cli-service express:run",
-    "start": "./run.sh"
+    "start": "vue-cli-service express:watch & vue-cli-service serve"
   },
   "dependencies": {
+    "@vue/cli": "^4.5.15",
     "api": "^4.0.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
