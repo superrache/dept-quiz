@@ -24,6 +24,7 @@
 
 <script>
 import Game from './components/Game.vue'
+import * as env from './utils/env.js'
 
 export default {
   name: 'App',
@@ -42,8 +43,7 @@ export default {
     this.game = this.$refs.game
   },
   async created() {
-    let url = window.location.origin.replace('8080', '3000')
-    const response = await fetch(url + "/games")
+    const response = await fetch(env.getServerUrl() + "/games")
     const data = await response.json()
     this.games = data
 

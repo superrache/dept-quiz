@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import * as env from '../utils/env.js'
 
 export default {
   name: 'Highscores',
@@ -32,8 +33,7 @@ export default {
     async show(game) {
         this.game = game
         
-        let url = window.location.origin.replace('8080', '3000')
-        const response = await fetch(url + "/highscore?type=s&game=" + game.id + "&ts=" + Date.now())
+        const response = await fetch(env.getServerUrl() + "/highscore?type=s&game=" + game.id + "&ts=" + Date.now())
         const data = await response.json()
         this.players = data
 

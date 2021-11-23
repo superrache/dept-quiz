@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import * as env from '../utils/env.js'
 
 export default {
   name: 'SaveScore',
@@ -33,8 +34,7 @@ export default {
         this.showSaveScore = true
     },
     async save() {
-        let url = window.location.origin.replace('8080', '3000')
-        const response = await fetch(url + "/highscore?type=i&game=" + this.game.id + "&name=" + this.playerName + "&score=" + this.score)
+        const response = await fetch(env.getServerUrl() + "/highscore?type=i&game=" + this.game.id + "&name=" + this.playerName + "&score=" + this.score)
         await response.json()
         this.showSaveScore = false
         this.$parent.showHighscores()

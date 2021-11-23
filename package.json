@@ -6,7 +6,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "node server.js"
+    "express": "vue-cli-service express:watch",
+    "express:run": "vue-cli-service express:run",
+    "dev": "npm run express & npm run serve",
+    "start": "npm run build & npm run express:run & node static.js"
   },
   "dependencies": {
     "@vue/cli": "^4.5.15",

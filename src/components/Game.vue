@@ -43,6 +43,7 @@ import { featureGroup } from "leaflet"
 import "leaflet/dist/leaflet.css";
 import Highscores from './Highscores.vue'
 import SaveScore from './SaveScore.vue'
+import * as env from '../utils/env.js'
 
 L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.3.4/dist/images/";
 
@@ -109,8 +110,7 @@ export default {
     },
     async load() {
       console.log('loading geojson ' + this.game.geojson)
-      let url = window.location.origin.replace('8080', '3000');
-      const response = await fetch(url + "/geojson?file=" + this.game.geojson)
+      const response = await fetch(env.getServerUrl() + "/geojson?file=" + this.game.geojson)
       const data = await response.json()
       this.geojson = data
       console.log(this.geojson.features.length + ' features loaded')
