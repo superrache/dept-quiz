@@ -72,7 +72,7 @@ export default {
       map: null,
       zoom: 2,
       center: { lat: 0, lng: 0 },
-      url: "http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
+      url: "https://stamen-tiles-c.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg",
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }
