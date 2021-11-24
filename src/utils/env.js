@@ -4,6 +4,6 @@ export function getServerUrl() {
     if(url.indexOf('herokuapp.com') > 0) {
         return url
     } else {
-        return url.replace('8080', '3000')
+        return url.replace(':8080', ':3000')
     }
 }
