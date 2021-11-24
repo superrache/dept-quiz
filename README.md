@@ -5,25 +5,28 @@
 npm install
 ```
 
-### Run node.js server
+## Development
+
+### Run node.js server with hot-reloads
 ```
 npm run express
 ```
 
-### Compiles and hot-reloads for development
+### Run vue app with hot-reloads
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+## Production
+
+### Deployment
 ```
 npm run build
+
+git push heroku main
 ```
 
-### Lints and fixes files
+### Heroku uses the following command to start both front and backend
 ```
-npm run lint
+npm run start
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
