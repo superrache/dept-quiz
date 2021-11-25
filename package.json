@@ -9,7 +9,7 @@
     "express": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:watch",
     "express:run": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:run",
     "dev": "npm run express & npm run serve",
-    "start": "DATABASE_URL=postgresql-adjacent-05468 node server.prod.js"
+    "start": "DATABASE_URL=postgres://thplxmzvejtajo:4fa5568ba1675891b54d598daffb494cdb9d7bb0516760a6d8d6e8a6d13dd479@ec2-34-241-19-183.eu-west-1.compute.amazonaws.com:5432/d5nsikp94red69 node server.prod.js"
   },
   "dependencies": {
     "@vue/cli": "^4.5.15",
