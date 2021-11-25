@@ -13,7 +13,10 @@ module.exports = function(app, databaseUrl) {
     console.log('Initializing database')
 
     const db = new Client({
-        connectionString: databaseUrl
+        connectionString: databaseUrl,
+        ssl: {
+            rejectUnauthorized: false
+        }
     })
 
     try {
