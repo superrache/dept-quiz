@@ -1,5 +1,9 @@
 # dept-quiz
 
+The game is here:
+
+[https://dept-quiz.herokuapp.com/](https://dept-quiz.herokuapp.com/)
+
 ## Project setup
 ```
 npm install

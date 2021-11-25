@@ -1,34 +1,35 @@
 <template>
     <div class="container">
-        <l-map id="map" :zoom="zoom" :center="center" ref="map">
-        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <l-geo-json
-            v-if="dispGeojson"
-            :geojson="geojson"
-            :options="options"
-            :options-style="styleFunction"
-            />
-        </l-map>
-        <div id="panel">
-          <div id="question">
-              <h1>{{ question }}</h1>
-          </div>
-          <div id="result">
-              <h2>{{ result }}</h2>
-          </div>
-          <div id="progression">
-            <h2>{{ current }} / {{ solutionIds.length }}</h2>
-          </div>
-          <div id="score">
-              <h2>Score : {{ score }}</h2>
-          </div>
-          <div id="bonus">
-              <h2>Bonus {{ bonus }}%</h2>
-          </div>
-          <button id="restart" v-on:click="restart()">Restart</button>
-          <button id="quit" v-on:click="quit()">Quit</button>
-          <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
+      <l-map id="map" :zoom="zoom" :center="center" ref="map">
+      <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+      <l-geo-json
+          v-if="dispGeojson"
+          :geojson="geojson"
+          :options="options"
+          :options-style="styleFunction"
+          />
+      </l-map>
+
+      <div id="panel">
+        <div id="question" v-html="question"></div>
+        <Transition mode="out-in" name="fade-in">
+          <div id="result" :key="result">{{ result }}</div>
+        </Transition>
+
+        <div id="score">Score : {{ score }}</div>
+        <div id="bonus">Bonus {{ bonus }}%</div>
+
+        <div id="progressborder">
+          <div id="progressbar" :style="{width: current / solutionIds.length * 100 + '%'}"></div>
+          <div id="progression">{{ current }} / {{ solutionIds.length }}</div>
         </div>
+      </div>
+
+      <div id="buttons">
+        <button id="restart" v-on:click="restart()">Restart</button>
+        <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
+        <button id="quit" v-on:click="quit()">Quit</button>
+      </div>
 
       <Highscores id="highscores" ref="highscores"/>
       <SaveScore id="savescore" ref="savescore"/>
@@ -165,7 +166,7 @@ export default {
         this.end()
       } else {
         this.departmentName = this.geojson.features[this.solutionIds[this.current]].properties[this.game.field]
-        this.question = "Où est " + this.game.typeLabel + " " + this.departmentName + " ?"
+        this.question = "Où est " + this.game.typeLabel + " <span style=\"color:#35a; font-weight: 700;\">" + this.departmentName + "</span> ?"
       }
     },
     onClic(name, layer) {
@@ -247,8 +248,12 @@ export default {
 <style scoped>
 
 .container {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
+  text-align: center;
+  overflow: hidden;
 }
 
 li {
@@ -259,17 +264,9 @@ a {
   color: #5eb793;
 }
 
-h1 {
-  color: #b6ffeb;
-}
-
-#result {
-  color: #5eb793;
-}
-
 #map {
-  margin-left: 350px;
-  width: 100% - 350px;
+  margin-left: 0px;
+  width: 100%;
   height: 100%;
   z-index: 1;
 }
@@ -279,66 +276,88 @@ h1 {
 }
 
 #panel {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 350px;
-  height: 100%;
+  position: relative;
+  transform: perspective(1px) translateY(-100%);
+  width: 95%;
+  height: 220px;
+  margin: 0 auto;
+  padding: 5px;
   z-index: 1000;
-  padding: 0px;
-  margin: 0px;
-  background: linear-gradient(#343434, #1d1d1b);
+  background: linear-gradient(#d5d5d577, #ffffffff);
   color: white;
+  border: 2px solid #FFFFFF;
+  border-radius: 11px;
 }
 
-@keyframes resultAnimation {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+#question {
+  color: #111;
+  font-size: 2.5em;
+}
+
+.deptname {
+  color: red;
 }
 
 #result {
-  animation: resultAnimation 1.5s infinite;
+  color: #333;
+  font-size: 1.5em;
 }
 
-@keyframes bonusAnimation {
-  0% { font-size: 1em; }
-  50% { font-size: 1.3em; }
-  100% { font-size: 1em; }
+.fade-in-enter-active {
+  transition: opacity 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
-#bonus {
-  animation: bonusAnimation 1s infinite;
+.fade-in-leave-active {
+  transition: opacity 225ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes scoreAnimation {
-  0% { background-color: transparent; }
-  100% { background-color: green; }
+.fade-in-enter,
+.fade-in-leave-to {
+  opacity: 0;
+}
+
+#progressborder {
+  border: 1px solid #898989;
+}
+
+#progressbar {
+  position: absolute;
+  left: 5;
+  height: 23px;
+  background-color: lightskyblue;
+}
+
+#progression {
+  color: #333;
+  font-size: 1em;
+  padding-top: 4px;
 }
 
 #score {
-  animation: scoreAnimation 0.5s infinte;
+  color: #333;
+  font-size: 1.5em;
 }
 
-#restart {
-  position: absolute;
-  left: 20px;
-  width: 310px;
-  bottom: 120px;
+#bonus {
+  color: #333;
+  font-size: 1.5em;
 }
 
-#quit {
-  position: absolute;
-  left: 20px;
-  bottom: 20px;
-  width: 310px;
+#buttons {
+  position: fixed;
+  z-index: 999;
+  right: 5px;
+  top: 5px;
+  max-width: 160px;
+  background: linear-gradient(#d5d5d577, #ffffffff);
+  color: white;
+  border: 2px solid #FFFFFF;
+  border-radius: 11px;
 }
 
-#showHighscores {
-  position: absolute;
-  left: 20px;
-  bottom: 70px;
-  width: 310px;
+#buttons button {
+  width: 100%;
+  margin-bottom: 5px;
 }
 
 #highscores {

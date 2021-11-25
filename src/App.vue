@@ -93,7 +93,7 @@ body {
 }
 
 h1 {
-  color: #5eb793;
+  color: rgb(74, 120, 236);
 }
 
 #games {
@@ -138,8 +138,7 @@ h1 {
 
 
 button {
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #34d98f, #006141);
+  background-color: #35a;
   border-radius: 11px;
   padding: 0px 20px 0px 20px;
   text-decoration: none;
@@ -149,8 +148,7 @@ button {
 }
 
 button:hover {
-  background: #5eb793;
-  background-image: linear-gradient(to bottom, #35bf65, #104d3b);
+  background-color: rgb(62, 102, 204);
   text-decoration: none;
 }
 
