@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="menu" v-show="showMenu">
-      <h1>dept-quiz</h1>
+      <h1 class="title">dept-quiz</h1>
       
       <h2>Choisis un jeu</h2>
 
@@ -81,7 +81,7 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(#343434, #1d1d1b);
+  background-color: #343434;
 }
 
 #app {
@@ -92,8 +92,9 @@ body {
   margin: 0;
 }
 
-h1 {
+.title {
   color: rgb(74, 120, 236);
+  font-weight: 700;
 }
 
 #games {
@@ -140,7 +141,7 @@ h1 {
 button {
   background-color: #35a;
   border-radius: 11px;
-  padding: 0px 20px 0px 20px;
+  padding: 0px 10px 0px 10px;
   text-decoration: none;
   cursor: pointer;
   color: white;

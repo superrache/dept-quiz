@@ -10,7 +10,7 @@
           />
       </l-map>
 
-      <div id="panel">
+      <div id="panel" class="floating-panel">
         <div id="question" v-html="question"></div>
         <Transition mode="out-in" name="fade-in">
           <div id="result" :key="result">{{ result }}</div>
@@ -25,10 +25,10 @@
         </div>
       </div>
 
-      <div id="buttons">
-        <button id="restart" v-on:click="restart()">Restart</button>
+      <div id="buttons" class="floating-panel">
+        <button id="restart" v-on:click="restart()">Redémarrer</button>
         <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
-        <button id="quit" v-on:click="quit()">Quit</button>
+        <button id="quit" v-on:click="quit()">Quitter</button>
       </div>
 
       <Highscores id="highscores" ref="highscores"/>
@@ -166,7 +166,7 @@ export default {
         this.end()
       } else {
         this.departmentName = this.geojson.features[this.solutionIds[this.current]].properties[this.game.field]
-        this.question = "Où est " + this.game.typeLabel + " <span style=\"color:#35a; font-weight: 700;\">" + this.departmentName + "</span> ?"
+        this.question = "Où est " + this.game.typeLabel + " <span class=\"title\">" + this.departmentName + "</span> ?"
       }
     },
     onClic(name, layer) {
@@ -275,18 +275,20 @@ a {
   width: auto;
 }
 
+.floating-panel {
+  background: linear-gradient(#d5d5d577, #ffffffff);
+  border: 2px solid #FFFFFF;
+  border-radius: 11px;
+}
+
 #panel {
   position: relative;
   transform: perspective(1px) translateY(-100%);
   width: 95%;
-  height: 220px;
   margin: 0 auto;
   padding: 5px;
   z-index: 1000;
-  background: linear-gradient(#d5d5d577, #ffffffff);
   color: white;
-  border: 2px solid #FFFFFF;
-  border-radius: 11px;
 }
 
 #question {
@@ -349,10 +351,8 @@ a {
   right: 5px;
   top: 5px;
   max-width: 160px;
-  background: linear-gradient(#d5d5d577, #ffffffff);
+  padding:10px 10px 5px 10px;
   color: white;
-  border: 2px solid #FFFFFF;
-  border-radius: 11px;
 }
 
 #buttons button {

@@ -1,5 +1,5 @@
 <template>
-  <div id="highscores" v-show="showHighscores">
+  <div id="highscores" class="title" v-show="showHighscores">
       <h1>Highscores</h1>
       <h2>{{ game.label }}</h2>
       

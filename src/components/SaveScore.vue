@@ -1,6 +1,6 @@
 <template>
   <div id="save-score" v-show="showSaveScore">
-      <h1>Save your score</h1>
+      <h1 class="title">Save your score</h1>
       <h2>You scored {{ score }} at {{ game.label }}</h2>
       <input id="input-player-name" type="text" 
             placeholder="Enter your name" required 
