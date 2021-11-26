@@ -10,19 +10,23 @@
           />
       </l-map>
 
+      <Transition mode="out-in" name="score-update">
+        <div id="score" :key="score">{{ score }}</div>
+      </Transition>
+
       <div id="panel" class="floating-panel">
         <div id="question" v-html="question"></div>
-        <Transition mode="out-in" name="fade-in">
+        <Transition mode="out-in" name="result-update">
           <div id="result" :key="result">{{ result }}</div>
         </Transition>
 
-        <div id="score">Score : {{ score }}</div>
-        <div id="bonus">Bonus {{ bonus }}%</div>
-
-        <div id="progressborder">
-          <div id="progressbar" :style="{width: current / solutionIds.length * 100 + '%'}"></div>
-          <div id="progression">{{ current }} / {{ solutionIds.length }}</div>
+        <div id="stats">
+          <div id="corrects">Corrects : {{ corrects }}</div>
+          <div id="bonus">Bonus : {{ bonus }}%</div>
         </div>
+
+        <div id="progression">{{ current }} / {{ solutionIds.length }}</div>
+        <div id="progressbar" :style="{width: current / solutionIds.length * 98 + '%'}"></div>
       </div>
 
       <div id="buttons" class="floating-panel">
@@ -63,6 +67,7 @@ export default {
       question: "",
       result: "",
       score: 0,
+      corrects: 0,
       bonus: 0,
       playing: false,
       departmentName: "",
@@ -144,6 +149,7 @@ export default {
       this.current = -1
       this.progression = 0
       this.score = 0
+      this.corrects = 0
       this.bonus = 100
       this.playing = true
 
@@ -174,6 +180,7 @@ export default {
         if(this.departmentName === name) {
           this.result = "Correct"
           this.score += this.bonus
+          this.corrects++
           this.bonus += 20
           layer.feature.properties.won = true
           layer.setStyle({fillColor: "green"})
@@ -279,6 +286,34 @@ a {
   background: linear-gradient(#d5d5d577, #ffffffff);
   border: 2px solid #FFFFFF;
   border-radius: 11px;
+  padding: 10px 10px 5px 10px;
+}
+
+#score {
+  position: absolute;
+  z-index: 1002;
+  left: 60px;
+  top: 20px;
+  color: white;
+  font-size: 2em;
+  font-weight: 700;
+  text-shadow: 3px 2px 10px rgb(74, 120, 236);
+}
+
+.score-update-enter-active {
+  animation: bounce-in .7s;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(2.5);
+  }
+  100% {
+    transform: scale(2);
+  }
 }
 
 #panel {
@@ -286,9 +321,9 @@ a {
   transform: perspective(1px) translateY(-100%);
   width: 95%;
   margin: 0 auto;
-  padding: 5px;
   z-index: 1000;
   color: white;
+  padding-bottom: 12px;
 }
 
 #question {
@@ -305,44 +340,45 @@ a {
   font-size: 1.5em;
 }
 
-.fade-in-enter-active {
+.result-update-enter-active {
   transition: opacity 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
-.fade-in-leave-active {
+.result-update-leave-active {
   transition: opacity 225ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.fade-in-enter,
-.fade-in-leave-to {
+.result-update-enter,
+.result-update-leave-to {
   opacity: 0;
 }
 
-#progressborder {
-  border: 1px solid #898989;
+#stats {
+  height: 0px;
+}
+
+#corrects {
+  float: left;
+  color: #333;
+  font-size: 1em;
+}
+
+#bonus {
+  float: right;
+  color: #333;
+  font-size: 1em;
+}
+
+#progression {
+  color: rgb(74, 120, 236);
+  font-size: 1em;
+  font-weight: 700;
 }
 
 #progressbar {
   position: absolute;
-  left: 5;
-  height: 23px;
-  background-color: lightskyblue;
-}
-
-#progression {
-  color: #333;
-  font-size: 1em;
-  padding-top: 4px;
-}
-
-#score {
-  color: #333;
-  font-size: 1.5em;
-}
-
-#bonus {
-  color: #333;
-  font-size: 1.5em;
+  height: 5px;
+  background-color: rgb(74, 120, 236);
 }
 
 #buttons {
@@ -351,7 +387,6 @@ a {
   right: 5px;
   top: 5px;
   max-width: 160px;
-  padding:10px 10px 5px 10px;
   color: white;
 }
 

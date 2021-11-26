@@ -114,18 +114,18 @@ body {
   margin: 20px;
   padding: 20px;
   cursor: pointer;
-  background-color: #5eb79320;
+  background-color: rgba(74, 120, 236, 0.1);
   border: 5px solid transparent;
   border-radius: 20px;
   box-shadow: 3px 3px 11px -3px #000000;
 }
 
 .game:hover {
-  background-color: #5eb79360;
+  background-color: rgba(74, 120, 236, 0.5);
 }
 
 .game:active {
-  background-color: #5eb793aa;
+  background-color: rgb(74, 120, 236);
 }
 
 .game h3 {
@@ -139,7 +139,7 @@ body {
 
 
 button {
-  background-color: #35a;
+  background-color: rgb(74, 120, 236);
   border-radius: 11px;
   padding: 0px 10px 0px 10px;
   text-decoration: none;
