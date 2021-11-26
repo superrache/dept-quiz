@@ -13,7 +13,7 @@
         </table>
       </div>
       <br/>
-      <button id="close" v-on:click="close()">Close</button>
+      <button id="close" v-on:click="close()">Fermer</button>
     </div>
 </template>
 

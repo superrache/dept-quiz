@@ -26,13 +26,13 @@
         </div>
 
         <div id="progression">{{ current }} / {{ solutionIds.length }}</div>
-        <div id="progressbar" :style="{width: current / solutionIds.length * 98 + '%'}"></div>
+        <div id="progressbar" :style="{width: current / solutionIds.length * 95 + '%'}"></div>
       </div>
 
       <div id="buttons" class="floating-panel">
-        <button id="restart" v-on:click="restart()">Redémarrer</button>
-        <button id="showHighscores" v-on:click="showHighscores()">Highscores</button>
-        <button id="quit" v-on:click="quit()">Quitter</button>
+        <button id="restart" v-on:click="restart()"><img src="../img/restart.svg" width=40 title="Redémarrer" /></button>
+        <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=40 title="Highscores" /></button>
+        <button id="quit" v-on:click="quit()"><img src="../img/exit.svg" width=40 title="Quitter" /></button>
       </div>
 
       <Highscores id="highscores" ref="highscores"/>
@@ -386,13 +386,14 @@ a {
   z-index: 999;
   right: 5px;
   top: 5px;
-  max-width: 160px;
+  padding-right: 5px;
   color: white;
 }
 
 #buttons button {
-  width: 100%;
+  margin-right: 5px;
   margin-bottom: 5px;
+  padding-top: 5px;
 }
 
 #highscores {

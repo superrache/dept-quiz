@@ -8,8 +8,8 @@
             v-model="playerName"
             @keyup.enter="save()"/>
       <div id="buttons">
-        <button id="save" v-on:click="save()">Save</button>
-        <button id="close" v-on:click="close()">Cancel</button>
+        <button id="save" v-on:click="save()">Enregistrer</button>
+        <button id="close" v-on:click="close()">Annuler</button>
       </div>
     </div>
 </template>
