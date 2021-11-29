@@ -297,7 +297,7 @@ a {
   color: white;
   font-size: 2em;
   font-weight: 700;
-  text-shadow: 3px 2px 10px rgb(74, 120, 236);
+  text-shadow: 3px 2px 5px black;
 }
 
 .score-update-enter-active {
