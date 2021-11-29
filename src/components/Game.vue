@@ -318,7 +318,7 @@ a {
 
 #panel {
   position: relative;
-  transform: perspective(1px) translateY(-100%);
+  transform: perspective(1px) translateY(-120%);
   width: 95%;
   margin: 0 auto;
   z-index: 1000;

@@ -24,13 +24,12 @@ npm run serve
 ## Production
 
 ### Deployment
+This command will push in the heroku git depo then build (`npm run build`) and deploy the app:
 ```
-npm run build
-
 git push heroku main
 ```
 
-### Heroku uses the following command to start both front and backend
+Heroku uses the following command to start both front and backend
 ```
 npm run start
 ```
