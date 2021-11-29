@@ -38,5 +38,13 @@
         "geojson": "communes-44-loire-atlantique.geojson",
         "field": "nom",
         "typeLabel": "la commune"
+    },
+    {
+        "id": "uk",
+        "label": "Les divisions administratives du Royaume-Uni",
+        "image": "uk.webp",
+        "geojson": "uk.geojson",
+        "field": "ITL221NM",
+        "typeLabel": "la région"
     }
 ]
