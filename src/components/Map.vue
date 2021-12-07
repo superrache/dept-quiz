@@ -32,24 +32,34 @@ export default {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }
   },
-  computed: {
-      options() {
-          return {
-              onEachFeature: this.onEachFeature
-          };
-      },
-      styleFunction() {
-        return () => {
-          return {
-            
-          };
-        };
-      }
-  },
   mounted() {
+    //const style = 'http://localhost:8100/style.json'
+    const style = {
+        version: 8,
+        sources: {
+            'raster-tiles': {
+                type: 'raster',
+                tiles: [
+                    'https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
+                ],
+                tileSize: 256,
+                attribution: this.attribution
+            }
+        },
+        layers: [
+            {
+                id: 'tiles',
+                type: 'raster',
+                source: 'raster-tiles',
+                minzoom: 0,
+                maxzoom: 22
+            }
+        ]
+    }
+
     this.map = new Map({
         container: this.$refs.map,
-        style: `http://localhost:8100/style.json`,
+        style: style,
         center: [this.center.lng, this.center.lat],
         zoom: this.zoom
       })
@@ -57,22 +67,6 @@ export default {
     this.map.addControl(new NavigationControl(), 'top-right')
 
     this.map.on('click', this.onClic)
-
-    /*this.map.addSource('stamen', {
-            type: 'raster',
-            tiles:["https://stamen-tiles-c.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg"],
-            tileSize: 256,
-            "scheme": "tms",
-            "minzoom": 0,
-            "maxzoom": 15,
-            "bounds": [-15,0,15,83]
-        })
-
-    this.map.addLayer({
-      id: "stamen",
-      type: "raster",
-      source: "stamen"
-      })*/
 
   },
   methods: {
