@@ -1,0 +1,244 @@
+<template>
+    <div class="container">
+      <div id="map" ref="map">
+        <div id="attribution" v-html="attribution"></div>
+      </div>
+    </div>
+</template>
+
+<script>
+
+import { Map, NavigationControl } from 'maplibre-gl';
+import bbox from '@turf/bbox'
+
+const geojsonSourceId = "geojson-source"
+const geojsonLayerId = "geojson-layer"
+const geojsonStrokeLayerId = "geojson-stroke-layer"
+
+const initColor = "orange"
+const goodColor = "green"
+//const wrongColor = "red"*/
+
+export default {
+  name: 'Map',
+  data() {
+    return {
+      gameVue: null,
+      geojson: null,
+      map: null,
+      hoveredStateId: null,
+      zoom: 2,
+      center: { lat: 0, lng: 0 },
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }
+  },
+  mounted() {
+    //const style = 'http://localhost:8100/style.json'
+    const style = {
+        version: 8,
+        sources: {
+            'raster-tiles': {
+                type: 'raster',
+                tiles: [
+                    'https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
+                ],
+                tileSize: 256,
+                attribution: this.attribution
+            }
+        },
+        layers: [
+            {
+                id: 'tiles',
+                type: 'raster',
+                source: 'raster-tiles',
+                minzoom: 0,
+                maxzoom: 22
+            }
+        ]
+    }
+
+    this.map = new Map({
+        container: this.$refs.map,
+        style: style,
+        center: [this.center.lng, this.center.lat],
+        zoom: this.zoom
+      })
+    
+    this.map.addControl(new NavigationControl(), 'top-right')
+
+    this.map.on('click', this.onClic)
+
+  },
+  methods: {
+    setGameVue(gameVue) {
+        this.gameVue = gameVue
+    },
+    removeCurrentGeojson() {
+        if(this.map.getLayer(geojsonStrokeLayerId))this.map.removeLayer(geojsonStrokeLayerId)
+        if(this.map.getLayer(geojsonLayerId))this.map.removeLayer(geojsonLayerId)
+        if(this.map.getSource(geojsonSourceId)) this.map.removeSource(geojsonSourceId)
+
+        this.geojson = null
+    },
+    loadGeojson(geojson) {
+        this.removeCurrentGeojson()
+
+        this.geojson = geojson
+
+        for(var f in this.geojson.features) {
+            const feature = this.geojson.features[f]
+            feature.played = false
+            console.log(feature)
+        }
+
+        this.map.addSource(geojsonSourceId, {
+            type: "geojson",
+            data: this.geojson,
+            generateId: true
+        })
+
+        this.map.addLayer({
+            id: geojsonLayerId,
+            type: "fill",
+            source: geojsonSourceId,
+            interactive: true,
+            layout: {},
+            paint: {
+                "fill-outline-color": "#ffffff",
+                "fill-color": ['case', ['boolean', ['feature-state', 'played'], false], goodColor, initColor],
+                "fill-opacity": ['case', ['boolean', ['feature-state', 'hovered'], false], 0.7, 0.5]
+            },
+            "filter": ["==", "$type", "Polygon"]
+        })
+
+        this.map.addLayer({
+            id: geojsonStrokeLayerId,
+            type: "line",
+            source: geojsonSourceId,
+            layout: {},
+            paint: {
+                "line-color": "#ffffff",
+                "line-width": 2,
+                "line-opacity": 1
+            },
+            "filter": ["==", "$type", "Polygon"]
+        })
+
+        this.map.on('mousemove', geojsonLayerId, (e) => {
+            if(e.features.length > 0) {
+                this.map.getCanvas().style.cursor = "pointer" //crosshair
+                this.highlightFeature(e.features[0])
+            }
+        })
+
+        this.map.on('mouseleave', geojsonLayerId, () => {
+            this.map.getCanvas().style.cursor = ""
+            this.unHighlightFeature()
+        })
+    },
+    zoomToBounds(bounds) {
+        this.map.fitBounds(bounds, {
+            padding: {top: 20, bottom: 20, left: 20, right: 20}
+        })
+    },
+    zoomToFeature(feature) {
+        console.log("zoomToFeature")
+        console.log(feature.properties)
+        var bounds = bbox(feature.geometry)
+        this.zoomToBounds(bounds)
+    },
+    zoomToFeatures() {
+        var bounds = bbox(this.geojson)
+        this.zoomToBounds(bounds)
+    },
+    onClic(e) {
+        var features = this.map.queryRenderedFeatures(e.point, { layers: [geojsonLayerId] })
+        if(features.length > 0) {
+            var feature = features[0];
+            this.gameVue.onClic(feature)
+        }
+    },
+    setGoodFeature(feature) {
+        this.map.setFeatureState(
+            { source: geojsonSourceId, id: feature.id },
+            { played: true }
+        )
+    },
+    setWrongFeature(feature) {
+        this.map.setFeatureState(
+            { source: geojsonSourceId, id: feature.id },
+            { played: false }
+        )
+    },
+    getFeature(field, value) {
+        console.log("getFeature " + field + "=" + value)
+        // ne fonctionne pas à chaque fois ...
+        var features = this.map.querySourceFeatures(geojsonSourceId, {
+            sourceLayer: geojsonLayerId,
+            filter: ["==", field, value]
+        })
+
+        //var features = this.map.getSource(geojsonSourceId)._data.features // les features n'ont pas d'id
+        //var features = this.map.getLayer(geojsonLayerId)._data.features // pas de _data
+
+        for(var f in features) {
+            const feature = features[f]
+            if(feature.properties[field] === value) {
+                console.log("Found " + feature.properties['nom'])
+                console.log(feature.id)
+                return feature
+            }
+        }
+        return null
+    },
+    highlightFeature(feature) {
+        this.unHighlightFeature()
+        this.hoveredStateId = feature.id
+        this.map.setFeatureState(
+            { source: geojsonSourceId, id: this.hoveredStateId },
+            { hovered: true }
+        )
+    },
+    unHighlightFeature() {
+        if(this.hoveredFeatureId !== null) {
+            this.map.setFeatureState(
+                { source: geojsonSourceId, id: this.hoveredStateId },
+                { hovered: false }
+            )
+        }
+        this.hoveredStateId = null
+    }
+  }
+}
+
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
+@import '~maplibre-gl/dist/maplibre-gl.css';
+
+li {
+  cursor: pointer;
+}
+
+a {
+  color: #5eb793;
+}
+
+#map {
+  margin-left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#attribution {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  color: black;
+  z-index: 1005;
+}
+
+</style>

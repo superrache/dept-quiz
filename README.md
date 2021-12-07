@@ -11,6 +11,8 @@ npm install
 
 ## Development
 
+A PostgreSQL database `test` has to be created before launching server
+
 ### Run node.js server with hot-reloads
 ```
 npm run express

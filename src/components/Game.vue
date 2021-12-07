@@ -1,14 +1,6 @@
 <template>
     <div class="container">
-      <l-map id="map" :zoom="zoom" :center="center" ref="map">
-      <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <l-geo-json
-          v-if="dispGeojson"
-          :geojson="geojson"
-          :options="options"
-          :options-style="styleFunction"
-          />
-      </l-map>
+      <Map id="map" ref="map"/>
 
       <Transition mode="out-in" name="score-update">
         <div id="score" :key="score">{{ score }}</div>
@@ -42,22 +34,16 @@
 </template>
 
 <script>
-import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
-import L from "leaflet";
-import { featureGroup } from "leaflet"
-import "leaflet/dist/leaflet.css";
+
+import Map from './Map.vue'
 import Highscores from './Highscores.vue'
 import SaveScore from './SaveScore.vue'
 import * as env from '../utils/env.js'
 
-L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.3.4/dist/images/";
-
 export default {
   name: 'Game',
   components: {
-    "l-map": LMap,
-    "l-tile-layer": LTileLayer,
-    LGeoJson,
+    Map,
     Highscores,
     SaveScore
   },
@@ -74,36 +60,15 @@ export default {
       geojson: null,
       solutionIds: [],
       current: 0,
-      dispGeojson: true,
-      map: null,
-      zoom: 2,
-      center: { lat: 0, lng: 0 },
-      url: "https://stamen-tiles-c.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg",
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      mapVue: null
     }
-  },
-  computed: {
-      options() {
-          return {
-              onEachFeature: this.onEachFeature
-          };
-      },
-      styleFunction() {
-        return () => {
-          return {
-            weight: 2,
-            color: "#ECEFF1",
-            opacity: 1,
-            fillColor: "#e4ce7f",
-            fillOpacity: 0.5
-          };
-        };
-      }
   },
   created() {
     this.question = "loading"
-    
+  },
+  mounted() {
+    this.mapVue = this.$refs.map
+    this.mapVue.setGameVue(this)
   },
   methods: {
     async launch(game) {
@@ -119,21 +84,24 @@ export default {
       const response = await fetch(env.getServerUrl() + "/geojson?file=" + this.game.geojson)
       const data = await response.json()
       this.geojson = data
+
+      this.mapVue.loadGeojson(this.geojson)
+
       console.log(this.geojson.features.length + ' features loaded')
     },
     shuffleArray(array) {
-      let curId = array.length;
+      let curId = array.length
       // There remain elements to shuffle
       while (0 !== curId) {
         // Pick a remaining element
-        let randId = Math.floor(Math.random() * curId);
-        curId -= 1;
-        // Swap it with the current element.
-        let tmp = array[curId];
-        array[curId] = array[randId];
-        array[randId] = tmp;
+        let randId = Math.floor(Math.random() * curId)
+        curId -= 1
+        // Swap it with the current element
+        let tmp = array[curId]
+        array[curId] = array[randId]
+        array[randId] = tmp
       }
-      return array;
+      return array
     },
     shufflize() {
       console.log('shuffling solution')
@@ -141,7 +109,7 @@ export default {
       for(var i = 0; i < this.geojson.features.length; i++) {
         this.solutionIds[i] = i
       }
-      this.solutionIds = this.shuffleArray(this.solutionIds);
+      this.solutionIds = this.shuffleArray(this.solutionIds)
     },
     start() {
       console.log('game start')
@@ -153,15 +121,7 @@ export default {
       this.bonus = 100
       this.playing = true
 
-      // zoom sur toutes les entités
-      this.map = this.$refs.map // ne fonctionne pas en created()
-      var group = new featureGroup()
-      this.map.mapObject.eachLayer(function(layer) {
-        if(layer.feature != undefined) {
-          group.addLayer(layer)
-        }
-      })
-      this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
+      this.mapVue.zoomToFeatures()
 
       this.next()
     },
@@ -175,39 +135,33 @@ export default {
         this.question = "Où est " + this.game.typeLabel + " <span class=\"title\">" + this.departmentName + "</span> ?"
       }
     },
-    onClic(name, layer) {
+    onClic(feature) {
       if(this.playing) {
+        const name = feature.properties[this.game.field]
         if(this.departmentName === name) {
           this.result = "Correct"
           this.score += this.bonus
           this.corrects++
           this.bonus += 20
-          layer.feature.properties.won = true
-          layer.setStyle({fillColor: "green"})
 
-          // zoom sur cette feature
-          //const bounds = [[layer._bounds._southWest.lat, layer._bounds._southWest.lng], [layer._bounds._northEast.lat, layer._bounds._northEast.lng]]
-          //this.map.mapObject.flyToBounds(bounds, { padding: [20, 20]})
+          this.mapVue.setGoodFeature(feature)
         } else {
           this.result = "Incorrect (" + name + ")"
           this.bonus = 100
-          layer.setStyle({fillColor: "red"})
-          
+
+          this.mapVue.setWrongFeature(feature)
+
           // zoom sur la bonne feature, à déterminer
-          var group = new featureGroup()
-          this.map.mapObject.eachLayer(function(layer) {
-            if(layer.feature != undefined && layer.feature.properties[this.game.field] === this.departmentName) {
-              console.log(layer)
-              group.addLayer(layer)
-              layer.setStyle({fillColor: "orange"})
-            }
-          }.bind(this))
-          console.log(group.getBounds())
-          this.map.mapObject.flyToBounds(group.getBounds(), { padding: [20, 20]})
-          
+          const goodFeature = this.mapVue.getFeature(this.game.field, this.departmentName)
+          if(goodFeature !== null) {
+            this.mapVue.zoomToFeature(goodFeature)
+            //this.mapVue.highlightFeature(goodFeature)
+          } else {
+            console.log("good feature not found")
+          }
         }
         this.next()
-        //this.end()
+        //this.end() // debug
       }
     },
     end() {
@@ -228,23 +182,6 @@ export default {
     },
     showHighscores() {
       this.$refs.highscores.show(this.game)
-    },
-    onEachFeature(feature, layer) {
-      const self = this
-
-      layer.on('mouseover', function() {
-        this.setStyle({fillColor: "#e4ce30"})
-      })
-
-      layer.on('mouseout', function() {
-        if(this.feature.properties.won) this.setStyle({fillColor: "green"}) 
-        else this.setStyle({fillColor: "#e4ce7f"})
-      })
-
-      layer.on('click', function() {
-        console.log('click on ' + feature.properties[self.game.field])
-        self.onClic(feature.properties[self.game.field], this)
-      })
     }
   }
 }
@@ -253,6 +190,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+@import '~maplibre-gl/dist/maplibre-gl.css';
 
 .container {
   margin: 0;
@@ -276,10 +215,6 @@ a {
   width: 100%;
   height: 100%;
   z-index: 1;
-}
-
-.vue2leaflet-map {
-  width: auto;
 }
 
 .floating-panel {
@@ -384,7 +319,7 @@ a {
 #buttons {
   position: fixed;
   z-index: 999;
-  right: 5px;
+  right: 50px;
   top: 5px;
   padding-right: 5px;
   color: white;

@@ -1,7 +1,7 @@
 {
   "name": "dept-quiz",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -11,20 +11,34 @@
     "dev": "npm run express & npm run serve",
     "start": "node server.prod.js"
   },
+  "keywords": [
+    "vue",
+    "vue.js",
+    "geojson",
+    "postgresql",
+    "map",
+    "maplibre",
+    "maplibre-gl-js"
+  ],
+  "author": "superrache",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/superrache/dept-quiz/issues"
+  },
+  "homepage": "https://github.com/superrache/dept-quiz",
   "dependencies": {
+    "@turf/bbox": "^6.5.0",
     "@vue/cli": "^4.5.15",
     "api": "^4.1.0",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "leaflet": "^1.7.1",
-    "maplibre-gl": "^2.0.0-pre.6",
+    "maplibre-gl": "^1.15.2",
     "pg": "^8.7.1",
     "serve-static": "^1.14.1",
     "sqlite3": "^5.0.2",
-    "vue": "^2.6.11",
-    "vue2-leaflet": "^2.7.1"
+    "vue": "^3.2.24"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

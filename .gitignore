@@ -1,2 +1,12 @@
 node_modules/
+dist/
 data/highscore.db
+
+*.pbf
+*.mbtiles
+
+*.cpg
+*.dbf
+*.prj
+*.shp
+*.shx
