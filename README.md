@@ -26,6 +26,11 @@ npm run serve
 ## Production
 
 ### Deployment
+
+Connect the repo to the app
+```
+heroku git:remote -a <heroku-app>
+```
 This command will push in the heroku git depo then build (`npm run build`) and deploy the app:
 ```
 git push heroku main
