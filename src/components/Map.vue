@@ -83,11 +83,6 @@ export default {
 
         this.geojson = geojson
 
-        for(var f in this.geojson.features) {
-            const feature = this.geojson.features[f]
-            feature.played = false
-        }
-
         this.map.addSource(geojsonSourceId, {
             type: "geojson",
             data: this.geojson,
@@ -116,7 +111,11 @@ export default {
             paint: {
                 "line-color": "#ffffff",
                 "line-width": 2,
-                "line-opacity": 1
+                "line-opacity": 1,
+                "line-width-animation": {
+                    duration: 0,
+                    delay: 0
+                }
             },
             "filter": ["==", "$type", "Polygon"]
         })
@@ -161,10 +160,11 @@ export default {
         )
     },
     setWrongFeature(feature) {
-        this.map.setFeatureState(
+        console.log("wrong feature " + feature)
+        /*this.map.setFeatureState(
             { source: geojsonSourceId, id: feature.id },
-            { played: false }
-        )
+            { played: true }
+        )*/
     },
     getFeature(field, value) {
         console.log("getFeature " + field + "=" + value)
