@@ -4,7 +4,7 @@ const { Client } = require('pg')
  * The common server code
  * @param {app, databaseUrl} app 
  */
-module.exports = function(app, databaseUrl) {
+module.exports = function(app, databaseUrl, prod) {
     const fs = require('fs')
 
     console.log('Database URL: ' + databaseUrl)
@@ -30,9 +30,11 @@ module.exports = function(app, databaseUrl) {
     }
     
     app.get('/games', (req, res) => {
-        // parce que les ports server vue et server node sont différents 
-        res.header('Access-Control-Allow-Origin', "*")
-        res.header('Access-Control-Allow-Headers', "*")
+        if(!prod) { // parce que les ports server vue et server node sont différents en dev
+            res.header('Access-Control-Allow-Origin', "*")
+            res.header('Access-Control-Allow-Headers', "*")
+        }
+
         console.log('get /games')
         fs.readFile('./data/games.json', 'utf8', (err, data) => {
             if(err) {
@@ -44,8 +46,11 @@ module.exports = function(app, databaseUrl) {
     })
 
     app.get('/geojson', (req, res) => {
-        res.header('Access-Control-Allow-Origin', "*")
-        res.header('Access-Control-Allow-Headers', "*")
+        if(!prod) { // parce que les ports server vue et server node sont différents en dev
+            res.header('Access-Control-Allow-Origin', "*")
+            res.header('Access-Control-Allow-Headers', "*")
+        }
+
         console.log('get /geojson file=' + req.query.file)
         fs.readFile('./data/' + req.query.file, 'utf8', (err, data) => {
             if(err) {
@@ -57,8 +62,11 @@ module.exports = function(app, databaseUrl) {
     })
 
     app.get('/highscore', (req, res) => {
-        res.header('Access-Control-Allow-Origin', "*")
-        res.header('Access-Control-Allow-Headers', "*")
+        if(!prod) { // parce que les ports server vue et server node sont différents en dev
+            res.header('Access-Control-Allow-Origin', "*")
+            res.header('Access-Control-Allow-Headers', "*")
+        }
+
         console.log('get /highscore type=' + req.query.type)
 
         switch(req.query.type) {

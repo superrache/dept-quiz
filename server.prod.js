@@ -13,6 +13,6 @@ var port = process.env.PORT || 3001
 app.listen(port)
 
 const api = require('./server/api.js')
-api(app, process.env.DATABASE_URL)
+api(app, process.env.DATABASE_URL, true)
 
 console.log('Server listening on: '+ port)
