@@ -29,6 +29,8 @@
 
       <Highscores id="highscores" ref="highscores"/>
       <SaveScore id="savescore" ref="savescore"/>
+
+      <Loading id="loading" ref="loading" v-show="dispLoading"/>
     </div>
  
 </template>
@@ -38,6 +40,7 @@
 import Map from './Map.vue'
 import Highscores from './Highscores.vue'
 import SaveScore from './SaveScore.vue'
+import Loading from './Loading.vue'
 import * as env from '../utils/env.js'
 
 export default {
@@ -45,7 +48,8 @@ export default {
   components: {
     Map,
     Highscores,
-    SaveScore
+    SaveScore,
+    Loading
   },
   data() {
     return {
@@ -60,7 +64,8 @@ export default {
       geojson: null,
       solutionIds: [],
       current: 0,
-      mapVue: null
+      mapVue: null,
+      dispLoading: true
     }
   },
   created() {
@@ -75,6 +80,7 @@ export default {
       this.game = game
       console.log('starting game ' + this.game.id)
 
+      this.dispLoading = true
       await this.load()
       this.shufflize()
       this.start()
@@ -120,6 +126,7 @@ export default {
       this.corrects = 0
       this.bonus = 100
       this.playing = true
+      this.dispLoading = false
 
       this.mapVue.zoomToFeatures()
 

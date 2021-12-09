@@ -111,11 +111,7 @@ export default {
             paint: {
                 "line-color": "#ffffff",
                 "line-width": 2,
-                "line-opacity": 1,
-                "line-width-animation": {
-                    duration: 0,
-                    delay: 0
-                }
+                "line-opacity": 1
             },
             "filter": ["==", "$type", "Polygon"]
         })
