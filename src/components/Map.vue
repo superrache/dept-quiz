@@ -33,7 +33,6 @@ export default {
     }
   },
   mounted() {
-    //const style = 'http://localhost:8100/style.json'
     const style = {
         version: 8,
         sources: {
@@ -42,8 +41,7 @@ export default {
                 tiles: [
                     'https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
                 ],
-                tileSize: 256,
-                attribution: this.attribution
+                tileSize: 256
             }
         },
         layers: [
@@ -88,7 +86,6 @@ export default {
         for(var f in this.geojson.features) {
             const feature = this.geojson.features[f]
             feature.played = false
-            console.log(feature)
         }
 
         this.map.addSource(geojsonSourceId, {
@@ -143,7 +140,6 @@ export default {
     },
     zoomToFeature(feature) {
         console.log("zoomToFeature")
-        console.log(feature.properties)
         var bounds = bbox(feature.geometry)
         this.zoomToBounds(bounds)
     },

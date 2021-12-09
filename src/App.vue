@@ -26,6 +26,8 @@
 import Game from './components/Game.vue'
 import * as env from './utils/env.js'
 
+const appName = "dept-quiz" 
+
 export default {
   name: 'App',
   components: {
@@ -49,17 +51,40 @@ export default {
 
     this.showMenu = true
     this.showGame = false
+
+    var gameParam = this.getUrlParameter("game")
+    if(gameParam !== null) {
+      for(var g in this.games) {
+        const game = this.games[g]
+        if(game.id === gameParam) {
+          this.select(null, game)
+        }
+      }
+    }
   },
   methods: {
     select: function(event, game) {
       console.log("select " + game.id)
       this.showMenu = false
       this.showGame = true
+      this.setUrlParameter("game", game.id)
       this.game.launch(game)
     },
     quitGame() {
+      console.log("return to main menu")
       this.showMenu = true
       this.showGame = false
+      window.history.pushState(appName, "", "/")
+    },
+    getUrlParameter(name) {
+      const urlParams = new URLSearchParams(location.search)
+      const value = urlParams.get(name)
+      if(value !== undefined) return value
+      else return null
+    },
+    setUrlParameter(name, value) {
+      var title = appName + "? " + value
+      window.history.pushState(title, title, "/?" + name + "=" + value)
     }
   }
 }

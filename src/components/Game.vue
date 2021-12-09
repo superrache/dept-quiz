@@ -74,7 +74,7 @@ export default {
     async launch(game) {
       this.game = game
       console.log('starting game ' + this.game.id)
-      
+
       await this.load()
       this.shufflize()
       this.start()
