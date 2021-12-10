@@ -87,7 +87,7 @@ export default {
     },
     async load() {
       console.log('loading geojson ' + this.game.geojson)
-      await fetch(env.getServerUrl() + "/stat?feature=dept-quiz-" + this.game.id)
+      fetch(env.getServerUrl() + "/stat?feature=dept-quiz-" + this.game.id)
       const response = await fetch(env.getServerUrl() + "/geojson?file=" + this.game.geojson)
       const data = await response.json()
       this.geojson = data

@@ -45,6 +45,8 @@ export default {
     this.game = this.$refs.game
   },
   async created() {
+    fetch(env.getServerUrl() + "/stat?feature=dept-quiz-main-menu")
+
     const response = await fetch(env.getServerUrl() + "/games")
     const data = await response.json()
     this.games = data
