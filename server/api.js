@@ -23,6 +23,7 @@ module.exports = function(app, databaseUrl, prod) {
         db.connect()
         console.log('Connected')
         db.query('create table if not exists scores ( game text not null, name text not null, score int, created_at TIMESTAMPTZ DEFAULT Now());')
+        db.query('create table if not exists stat (ip text, feature text, visit TIMESTAMPTZ DEFAULT Now());')
         console.log('Table scores created or existing')
     } catch(e) {
         console.log('An error occured')
@@ -72,8 +73,7 @@ module.exports = function(app, databaseUrl, prod) {
         switch(req.query.type) {
             case 's':
             if(req.query.game) {
-                let sql = 'select name, score from scores where game like \'' + req.query.game + '\' order by score desc limit 15;'
-                db.query(sql, (err, sel) => {
+                db.query('select name, score from scores where game like $1 order by score desc limit 15;', [req.query.game], (err, sel) => {
                     if(err) {
                         console.error(err.message)
                     }
@@ -87,13 +87,43 @@ module.exports = function(app, databaseUrl, prod) {
             case 'i':
             if(req.query.name && req.query.score) {
                 console.log('inserting score for game ' + req.query.game + ' to player ' + req.query.name + " => " + req.query.score)
-                db.query('insert into scores(game, name, score) values(\'' + req.query.game + '\', \'' + req.query.name + '\', ' + req.query.score + ');')
+                db.query('insert into scores(game, name, score) values($1, $2, $3);', [req.query.game, req.query.name, req.query.score])
                 res.json({status: 200})
             } else {
-                res.json({error: 1})        
+                res.json({error: 1})
             }
             break
             default:
         }
+    })
+
+    app.get('/stat', (req, res) => {
+        console.log('get /stat')
+        var ip = req.socket.remoteAddress
+        var feature = req.query.feature
+        if(ip === undefined || ip === null) ip = 'unk'
+        if(feature === undefined || feature === null) feature = 'unk'
+        db.query('insert into stat(ip, feature) values($1, $2);', [ip, feature])
+        res.json({status: 200})
+    })
+
+    app.get('/get-stat', (req, res) => {
+        res.writeHead(200, {
+            'Content-Type': 'text/html'
+        })
+        var html = "<!doctype html><html><head><title>Stat</title></head><body><h1>Stat</h1><table border=\"1\"><tr><th>feature</th><th>ip</th><th>date</th></tr>"
+
+        db.query('select feature, ip, visit from stat order by visit desc', (err, sel) => {
+            if(err) {
+                console.log(err.message)
+            }
+            for(var r in sel.rows) {
+                const row = sel.rows[r]
+                html += "<tr><td>" + row.feature + "</td><td>" + row.ip + "</td><td>" + row.visit + "</td></tr>"
+            }
+            html += "</table></body></html>"
+            res.write(html)
+            res.end()
+        })
     })
 }
