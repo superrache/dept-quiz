@@ -98,6 +98,9 @@ module.exports = function(app, databaseUrl, prod) {
     })
 
     app.get('/stat', (req, res) => {
+        res.header('Access-Control-Allow-Origin', "*")
+        res.header('Access-Control-Allow-Headers', "*")
+
         console.log('get /stat')
         var ip = req.socket.remoteAddress
         var feature = req.query.feature
@@ -108,6 +111,9 @@ module.exports = function(app, databaseUrl, prod) {
     })
 
     app.get('/get-stat', (req, res) => {
+        res.header('Access-Control-Allow-Origin', "*")
+        res.header('Access-Control-Allow-Headers', "*")
+        
         res.writeHead(200, {
             'Content-Type': 'text/html'
         })
