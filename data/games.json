@@ -16,6 +16,14 @@
         "typeLabel": "le département"
     },
     {
+        "id": "frenchDeptCity",
+        "label": "Les préfectures de départements français",
+        "image": "prefecture.jpg",
+        "geojson": "departements.geojson",
+        "field": "prefecture",
+        "typeLabel": "le département"
+    },
+    {
         "id": "usStateNames",
         "label": "Les noms des Etats-Unis",
         "image": "iStock-532961103.webp",

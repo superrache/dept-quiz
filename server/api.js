@@ -119,7 +119,7 @@ module.exports = function(app, databaseUrl, prod) {
         })
         var html = "<!doctype html><html><head><title>Stat</title></head><body><h1>Stat</h1><table border=\"1\"><tr><th>feature</th><th>ip</th><th>date</th></tr>"
 
-        db.query('select feature, ip, visit from stat order by visit desc', (err, sel) => {
+        db.query('select feature, ip, visit from stat order by visit desc limit 1000', (err, sel) => {
             if(err) {
                 console.log(err.message)
             }
