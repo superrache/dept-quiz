@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/superrache/dept-quiz/compare/v0.1.2...v0.1.3) (2021-12-13)
+
+
+### Features
+
+* bonus animation ([37ecf9b](https://github.com/superrache/dept-quiz/commit/37ecf9b13f79ab4d00dde9d1e78ac1241f7944b2))
+
+
+### Bug Fixes
+
+* data label ([35b98a1](https://github.com/superrache/dept-quiz/commit/35b98a1c66a656376e66dfe8503626ff6e6d9a91))
+* improve zoom with bottom panel ([3159d6e](https://github.com/superrache/dept-quiz/commit/3159d6ee054914a33d4450ebe3588dbf98003e97))
+* score left value ([dc79347](https://github.com/superrache/dept-quiz/commit/dc793471ab50206a369215bbecd0c59190629bf9))
+
 ### [0.1.2](https://github.com/superrache/dept-quiz/compare/v0.1.1...v0.1.2) (2021-12-13)
 
 
