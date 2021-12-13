@@ -21,7 +21,7 @@
         "image": "prefecture.jpg",
         "geojson": "departements.geojson",
         "field": "prefecture",
-        "typeLabel": "le département"
+        "typeLabel": "la préfecture"
     },
     {
         "id": "usStateNames",
