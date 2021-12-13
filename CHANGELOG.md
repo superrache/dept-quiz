@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/superrache/dept-quiz/compare/v0.1.3...v0.1.4) (2021-12-13)
+
+
+### Bug Fixes
+
+* reduce img size ([4908aa4](https://github.com/superrache/dept-quiz/commit/4908aa40303648172672d8958e232fcab4e48f98))
+* server can't start without db url ([9c4d4fc](https://github.com/superrache/dept-quiz/commit/9c4d4fc3cb1493b88bed21bfe501e848a4d9aed0))
+
 ### [0.1.3](https://github.com/superrache/dept-quiz/compare/v0.1.2...v0.1.3) (2021-12-13)
 
 
