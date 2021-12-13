@@ -14,7 +14,9 @@
 
         <div id="stats">
           <div id="corrects">Corrects : {{ corrects }}</div>
-          <div id="bonus">Bonus : {{ bonus }}%</div>
+          <Transition mode="out-in" name="bonus-update">
+            <div id="bonus" :key="bonus">Bonus : {{ bonus }}%</div>
+          </Transition>
         </div>
 
         <div id="progression">{{ current }} / {{ solutionIds.length }}</div>
@@ -251,11 +253,17 @@ a {
   0% {
     transform: scale(1);
   }
-  50% {
+  40% {
     transform: scale(2.5);
   }
+  60% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1.5);
+  }
   100% {
-    transform: scale(2);
+    transform: scale(1);
   }
 }
 
@@ -308,8 +316,13 @@ a {
 
 #bonus {
   float: right;
+  text-align: right;
   color: #333;
   font-size: 1em;
+}
+
+.bonus-update-enter-active {
+  animation: bounce-in .7s;
 }
 
 #progression {
