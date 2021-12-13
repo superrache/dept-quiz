@@ -130,12 +130,13 @@ export default {
     },
     zoomToBounds(bounds) {
         this.map.fitBounds(bounds, {
-            padding: {top: 20, bottom: 20, left: 20, right: 20}
+            padding: {top: 50, bottom: 200, left: 50, right: 50}
         })
     },
     zoomToFeature(feature) {
         console.log("zoomToFeature")
         var bounds = bbox(feature.geometry)
+        console.log(bounds)
         this.zoomToBounds(bounds)
     },
     zoomToFeatures() {
@@ -156,7 +157,8 @@ export default {
         )
     },
     setWrongFeature(feature) {
-        console.log("wrong feature " + feature)
+        console.log("wrong feature")
+        console.log(feature)
         /*this.map.setFeatureState(
             { source: geojsonSourceId, id: feature.id },
             { played: true }
