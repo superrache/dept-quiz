@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/superrache/dept-quiz/compare/v0.1.1...v0.1.2) (2021-12-13)
+
+
+### Features
+
+* husky conf ([a4172e5](https://github.com/superrache/dept-quiz/commit/a4172e5d8119dbc86dd4f0d4c88a73bce60d1cf4))
+
 ### 0.1.1 (2021-12-13)
 
 
