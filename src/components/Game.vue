@@ -6,7 +6,7 @@
         <div id="score" :key="score">{{ score }}</div>
       </Transition>
 
-      <div id="panel" class="floating-panel">
+      <div id="panel" class="floating-panel" v-show="dispPanel">
         <div id="question" v-html="question"></div>
         <Transition mode="out-in" name="result-update">
           <div id="result" :key="result">{{ result }}</div>
@@ -25,6 +25,7 @@
 
       <div id="buttons" class="floating-panel">
         <button id="restart" v-on:click="restart()"><img src="../img/restart.svg" width=40 title="Redémarrer" /></button>
+        <button id="learning" :class="{'activatedbutton': learning}" v-on:click="switchLearningMode()"><img src="../img/learn.svg" width=40 title="Mode apprentissage" /></button>
         <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=40 title="Highscores" /></button>
         <button id="quit" v-on:click="quit()"><img src="../img/exit.svg" width=40 title="Quitter" /></button>
       </div>
@@ -67,7 +68,9 @@ export default {
       solutionIds: [],
       current: 0,
       mapVue: null,
-      dispLoading: true
+      dispLoading: true,
+      dispPanel: false,
+      learning: false
     }
   },
   created() {
@@ -130,6 +133,7 @@ export default {
       this.bonus = 100
       this.playing = true
       this.dispLoading = false
+      this.dispPanel = true
 
       this.mapVue.zoomToFeatures()
 
@@ -184,6 +188,7 @@ export default {
     },
     quit() {
       console.log('quit game')
+      if(this.learning) this.switchLearningMode()
       this.$parent.quitGame()
     },
     restart() {
@@ -192,6 +197,21 @@ export default {
     },
     showHighscores() {
       this.$refs.highscores.show(this.game)
+    },
+    switchLearningMode() {
+      this.learning = !this.learning
+      
+      this.mapVue.setLearningMode(this.learning, this.game.field)
+
+      if(this.learning) {
+        this.playing = false
+        this.dispPanel = false
+        this.score = 'Mode apprentissage'
+        // TODO laisser le bouton appuyé
+      } else {
+        // TODO lâcher le bouton
+        this.restart()
+      }
     }
   }
 }
@@ -350,6 +370,11 @@ a {
   margin-right: 5px;
   margin-bottom: 5px;
   padding-top: 5px;
+}
+
+.activatedbutton {
+  background-color: red;
+  border: 2px solid blue;
 }
 
 #highscores {

@@ -10,10 +10,14 @@
 
 import { Map, NavigationControl } from 'maplibre-gl';
 import bbox from '@turf/bbox'
+import centroid from '@turf/centroid'
 
-const geojsonSourceId = "geojson-source"
+const geojsonSourceId = "geojson"
 const geojsonLayerId = "geojson-layer"
 const geojsonStrokeLayerId = "geojson-stroke-layer"
+
+const centroidSourceId = "centroid"
+const centroidLayerId = "centroid"
 
 const initColor = "orange"
 const goodColor = "green"
@@ -25,6 +29,7 @@ export default {
     return {
       gameVue: null,
       geojson: null,
+      popup: null,
       map: null,
       hoveredStateId: null,
       zoom: 2,
@@ -35,6 +40,7 @@ export default {
   mounted() {
     const style = {
         version: 8,
+        glyphs: 'https://api.jawg.io/glyphs/{fontstack}/{range}.pbf',
         sources: {
             'raster-tiles': {
                 type: 'raster',
@@ -72,8 +78,8 @@ export default {
         this.gameVue = gameVue
     },
     removeCurrentGeojson() {
-        if(this.map.getLayer(geojsonStrokeLayerId))this.map.removeLayer(geojsonStrokeLayerId)
-        if(this.map.getLayer(geojsonLayerId))this.map.removeLayer(geojsonLayerId)
+        if(this.map.getLayer(geojsonStrokeLayerId)) this.map.removeLayer(geojsonStrokeLayerId)
+        if(this.map.getLayer(geojsonLayerId)) this.map.removeLayer(geojsonLayerId)
         if(this.map.getSource(geojsonSourceId)) this.map.removeSource(geojsonSourceId)
 
         this.geojson = null
@@ -178,7 +184,7 @@ export default {
         for(var f in features) {
             const feature = features[f]
             if(feature.properties[field] === value) {
-                console.log("Found " + feature.properties['nom'])
+                console.log("Found " + feature.properties[field])
                 console.log(feature.id)
                 return feature
             }
@@ -201,6 +207,51 @@ export default {
             )
         }
         this.hoveredStateId = null
+    },
+    setLearningMode(active, field) {
+        if(active) {
+            var centroidFeatures = []
+            this.geojson.features.forEach(function(feature) {
+                var centroidFeature = centroid(feature)
+                centroidFeature.properties[field] = feature.properties[field]
+                centroidFeatures.push(centroidFeature)
+            })
+            const centroidGeojson = {
+                type: "FeatureCollection",
+                features: centroidFeatures
+            }
+            
+            this.map.addSource(centroidSourceId, {
+                type: "geojson",
+                data: centroidGeojson,
+                generateId: true
+            })
+
+            this.map.addLayer({
+                id: centroidLayerId,
+                type: "symbol",
+                source: centroidSourceId,
+                layout: {
+                    'text-font': [
+                        'Open Sans Bold',
+                        'Noto Bold'
+                    ],
+                    'text-field': ['get', field],
+                    'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                    'text-radial-offset': 0.0,
+                    'text-justify': 'auto'
+                },
+                paint: {
+                    'text-color': '#110801',
+                    'text-halo-color': '#ffffff',
+                    'text-halo-width': 1
+                }
+            })
+
+        } else {
+            if(this.map.getLayer(centroidLayerId)) this.map.removeLayer(centroidLayerId)
+            if(this.map.getSource(centroidSourceId)) this.map.removeSource(centroidSourceId)
+        }
     }
   }
 }

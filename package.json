@@ -34,6 +34,7 @@
   "homepage": "https://github.com/superrache/dept-quiz",
   "dependencies": {
     "@turf/bbox": "^6.5.0",
+    "@turf/centroid": "^6.5.0",
     "@vue/cli": "^4.5.15",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
