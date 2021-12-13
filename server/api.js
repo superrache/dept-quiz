@@ -8,6 +8,10 @@ module.exports = function(app, databaseUrl, prod) {
     const fs = require('fs')
 
     console.log('Database URL: ' + databaseUrl)
+    if(databaseUrl === undefined) {
+        console.log('Error: database URL must be specified')
+        process.exit(1)
+    }
     const pg = require('pg')
 
     console.log('Initializing database')
