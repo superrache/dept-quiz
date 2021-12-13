@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/superrache/dept-quiz/compare/v0.1.4...v0.1.5) (2021-12-13)
+
+
+### Features
+
+* add learning mode ([83c6f04](https://github.com/superrache/dept-quiz/commit/83c6f04e47046eaebc51c48bbad45d9ced94520a))
+
+
+### Bug Fixes
+
+* prod static dir ([31cfa41](https://github.com/superrache/dept-quiz/commit/31cfa416d8b10be43ca10bef7597ea281134d554))
+
 ### [0.1.4](https://github.com/superrache/dept-quiz/compare/v0.1.3...v0.1.4) (2021-12-13)
 
 
