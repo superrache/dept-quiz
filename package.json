@@ -13,7 +13,8 @@
     "express": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test node server.dev.js",
     "express-watch": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:watch",
     "express:run": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:run",
-    "start": "node server.prod.js"
+    "start": "node server.prod.js",
+    "prepare": "husky install"
   },
   "keywords": [
     "vue",
@@ -31,22 +32,25 @@
   },
   "homepage": "https://github.com/superrache/dept-quiz",
   "dependencies": {
-    "maplibre-gl": "^1.15.2",
     "@turf/bbox": "^6.5.0",
-    "vue": "^3.2.24",
     "@vue/cli": "^4.5.15",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
+    "maplibre-gl": "^1.15.2",
     "pg": "^8.7.1",
-    "serve-static": "^1.14.1"
+    "serve-static": "^1.14.1",
+    "vue": "^3.2.24"
   },
   "devDependencies": {
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "husky": "^7.0.4",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
