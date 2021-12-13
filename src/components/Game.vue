@@ -237,7 +237,7 @@ a {
 #score {
   position: absolute;
   z-index: 1002;
-  left: 60px;
+  left: 20px;
   top: 20px;
   color: white;
   font-size: 2em;
