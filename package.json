@@ -1,6 +1,6 @@
 {
   "name": "dept-quiz",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "engines": {
     "node": "14.x",
@@ -14,7 +14,8 @@
     "express-watch": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:watch",
     "express:run": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:run",
     "start": "node server.prod.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "standard-version"
   },
   "keywords": [
     "vue",
@@ -51,6 +52,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "husky": "^7.0.4",
+    "standard-version": "^9.3.2",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
