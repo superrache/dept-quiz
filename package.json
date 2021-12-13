@@ -10,10 +10,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "express": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test node server.dev.js",
+    "express": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test node server/server.dev.js",
     "express-watch": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:watch",
     "express:run": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:run",
-    "start": "node server.prod.js",
+    "start": "node server/server.prod.js",
     "prepare": "husky install",
     "release": "standard-version"
   },

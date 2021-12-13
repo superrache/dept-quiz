@@ -7,12 +7,12 @@ var serveStatic = require('serve-static')
 
 const app = express()
 
-app.use(serveStatic(__dirname + "/dist"))
+app.use(serveStatic(__dirname + "../dist"))
 var port = process.env.PORT || 3001
 
 app.listen(port)
 
-const api = require('./server/api.js')
+const api = require('./api.js')
 api(app, process.env.DATABASE_URL, true)
 
 console.log('Server listening on: '+ port)
