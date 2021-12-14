@@ -162,14 +162,11 @@ export default {
         } else {
           this.result = "Incorrect (" + name + ")"
           this.bonus = 100
-
-          this.mapVue.setWrongFeature(feature)
-
+          
           // zoom sur la bonne feature, à déterminer
           const goodFeature = this.mapVue.getFeature(this.game.field, this.departmentName)
           if(goodFeature !== null) {
-            this.mapVue.zoomToFeature(goodFeature)
-            //this.mapVue.highlightFeature(goodFeature)
+            this.mapVue.setWasGoodFeature(goodFeature)
           } else {
             console.log("good feature not found")
           }
@@ -373,8 +370,8 @@ a {
 }
 
 .activatedbutton {
-  background-color: red;
-  border: 2px solid blue;
+  background-color: rgb(200, 80, 255);
+  border: 2px solid white;
 }
 
 #highscores {

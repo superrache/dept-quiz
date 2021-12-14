@@ -32,6 +32,7 @@ export default {
       popup: null,
       map: null,
       hoveredStateId: null,
+      wasGoodId: null,
       zoom: 2,
       center: { lat: 0, lng: 0 },
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -115,8 +116,8 @@ export default {
             source: geojsonSourceId,
             layout: {},
             paint: {
-                "line-color": "#ffffff",
-                "line-width": 2,
+                "line-color": ['case', ['boolean', ['feature-state', 'wasGood'], false], "#ff0000", "#ffffff"],
+                "line-width": ['case', ['boolean', ['feature-state', 'wasGood'], false], 5, 2],
                 "line-opacity": 1
             },
             "filter": ["==", "$type", "Polygon"]
@@ -150,28 +151,19 @@ export default {
         this.zoomToBounds(bounds)
     },
     onClic(e) {
+        this.unWasGoodFeature()
+
         var features = this.map.queryRenderedFeatures(e.point, { layers: [geojsonLayerId] })
         if(features.length > 0) {
             var feature = features[0];
             this.gameVue.onClic(feature)
         }
     },
-    setGoodFeature(feature) {
-        this.map.setFeatureState(
-            { source: geojsonSourceId, id: feature.id },
-            { played: true }
-        )
-    },
-    setWrongFeature(feature) {
-        console.log("wrong feature")
-        console.log(feature)
-        /*this.map.setFeatureState(
-            { source: geojsonSourceId, id: feature.id },
-            { played: true }
-        )*/
-    },
     getFeature(field, value) {
         console.log("getFeature " + field + "=" + value)
+
+        console.log(this.map.getSource(geojsonSourceId))
+
         // ne fonctionne pas à chaque fois ...
         var features = this.map.querySourceFeatures(geojsonSourceId, {
             sourceLayer: geojsonLayerId,
@@ -207,6 +199,29 @@ export default {
             )
         }
         this.hoveredStateId = null
+    },
+    setGoodFeature(feature) {
+        this.map.setFeatureState(
+            { source: geojsonSourceId, id: feature.id },
+            { played: true }
+        )
+    },
+    setWasGoodFeature(feature) {
+        this.zoomToFeature(feature)
+        this.wasGoodId = feature.id
+        this.map.setFeatureState(
+            { source: geojsonSourceId, id: this.wasGoodId },
+            { wasGood: true }
+        )
+    },
+    unWasGoodFeature() {
+        if(this.wasGoodId !== null) {
+            this.map.setFeatureState(
+                { source: geojsonSourceId, id: this.wasGoodId },
+                { wasGood: false }
+            )
+        }
+        this.wasGoodId = null
     },
     setLearningMode(active, field) {
         if(active) {
