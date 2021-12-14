@@ -2,10 +2,7 @@
   "name": "dept-quiz",
   "version": "0.1.5",
   "private": false,
-  "engines": {
-    "node": "14.x",
-    "npm": "8.1.x"
-  },
+  "author": "superrache",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -13,29 +10,15 @@
     "express": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test node server/server.dev.js",
     "express-watch": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:watch",
     "express:run": "DATABASE_URL=postgres://postgres:postgres@localhost:5432/test vue-cli-service express:run",
-    "start": "node server/server.prod.js",
     "prepare": "husky install",
-    "release": "standard-version"
+    "release": "standard-version",
+    "start": "node server/server.prod.js"
   },
-  "keywords": [
-    "vue",
-    "vue.js",
-    "geojson",
-    "postgresql",
-    "map",
-    "maplibre",
-    "maplibre-gl-js"
-  ],
-  "author": "superrache",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/superrache/dept-quiz/issues"
-  },
-  "homepage": "https://github.com/superrache/dept-quiz",
   "dependencies": {
     "@turf/bbox": "^6.5.0",
     "@turf/centroid": "^6.5.0",
     "@vue/cli": "^4.5.15",
+    "core-js": "^3.6.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "maplibre-gl": "^1.15.2",
@@ -45,7 +28,7 @@
   "devDependencies": {
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-babel": "^4.5.15",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
@@ -74,14 +57,32 @@
     "last 2 versions",
     "not dead"
   ],
+  "bugs": {
+    "url": "https://github.com/superrache/dept-quiz/issues"
+  },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
+  "engines": {
+    "node": "14.x",
+    "npm": "8.1.x"
+  },
+  "homepage": "https://github.com/superrache/dept-quiz",
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  }
+  },
+  "keywords": [
+    "vue",
+    "vue.js",
+    "geojson",
+    "postgresql",
+    "map",
+    "maplibre",
+    "maplibre-gl-js"
+  ],
+  "license": "MIT"
 }
