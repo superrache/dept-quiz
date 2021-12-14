@@ -160,28 +160,7 @@ export default {
         }
     },
     getFeature(field, value) {
-        console.log("getFeature " + field + "=" + value)
-
-        console.log(this.map.getSource(geojsonSourceId))
-
-        // ne fonctionne pas à chaque fois ...
-        var features = this.map.querySourceFeatures(geojsonSourceId, {
-            sourceLayer: geojsonLayerId,
-            filter: ["==", field, value]
-        })
-
-        //var features = this.map.getSource(geojsonSourceId)._data.features // les features n'ont pas d'id
-        //var features = this.map.getLayer(geojsonLayerId)._data.features // pas de _data
-
-        for(var f in features) {
-            const feature = features[f]
-            if(feature.properties[field] === value) {
-                console.log("Found " + feature.properties[field])
-                console.log(feature.id)
-                return feature
-            }
-        }
-        return null
+        return this.geojson.features.find(f => f.properties[field] === value)
     },
     highlightFeature(feature) {
         this.unHighlightFeature()
