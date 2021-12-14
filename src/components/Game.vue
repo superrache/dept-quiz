@@ -24,10 +24,10 @@
       </div>
 
       <div id="buttons" class="floating-panel">
-        <button id="restart" v-on:click="restart()"><img src="../img/restart.svg" width=40 title="Redémarrer" /></button>
-        <button id="learning" :class="{'activatedbutton': learning}" v-on:click="switchLearningMode()"><img src="../img/learn.svg" width=40 title="Mode apprentissage" /></button>
-        <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=40 title="Highscores" /></button>
-        <button id="quit" v-on:click="quit()"><img src="../img/exit.svg" width=40 title="Quitter" /></button>
+        <button id="restart" v-on:click="restart()"><img src="../img/restart.svg" width=30 title="Redémarrer" /></button>
+        <button id="learning" :class="{'activatedbutton': learning}" v-on:click="switchLearningMode()"><img src="../img/learn.svg" width=30 title="Mode apprentissage" /></button>
+        <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=30 title="Highscores" /></button>
+        <button id="quit" v-on:click="quit()"><img src="../img/exit.svg" width=30 title="Quitter" /></button>
       </div>
 
       <Highscores id="highscores" ref="highscores"/>
@@ -248,7 +248,7 @@ a {
   background: linear-gradient(#d5d5d577, #ffffffff);
   border: 2px solid #FFFFFF;
   border-radius: 11px;
-  padding: 10px 10px 5px 10px;
+  padding: 5px 5px 5px 5px;
 }
 
 #score {
@@ -296,7 +296,7 @@ a {
 
 #question {
   color: #111;
-  font-size: 2.5em;
+  font-size: 2em;
 }
 
 .deptname {
@@ -305,7 +305,7 @@ a {
 
 #result {
   color: #333;
-  font-size: 1.5em;
+  font-size: 1.3em;
 }
 
 .result-update-enter-active {
@@ -358,14 +358,12 @@ a {
   position: fixed;
   z-index: 999;
   right: 50px;
-  top: 5px;
-  padding-right: 5px;
+  top: 9px;
   color: white;
 }
 
 #buttons button {
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin: 0px 2px 0px 2px;
   padding-top: 5px;
 }
 

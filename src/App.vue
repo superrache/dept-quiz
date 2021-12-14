@@ -164,7 +164,6 @@ body {
   height: 70%;
 }
 
-
 button {
   background-color: rgb(74, 120, 236);
   border-radius: 11px;
