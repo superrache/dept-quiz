@@ -16,12 +16,11 @@ const geojsonSourceId = "geojson"
 const geojsonLayerId = "geojson-layer"
 const geojsonStrokeLayerId = "geojson-stroke-layer"
 
+const wasGoodSourceId = "was-good"
+const wasGoodLayerId = "was-good"
+
 const centroidSourceId = "centroid"
 const centroidLayerId = "centroid"
-
-const initColor = "orange"
-const goodColor = "green"
-//const wrongColor = "red"*/
 
 export default {
   name: 'Map',
@@ -32,7 +31,6 @@ export default {
       popup: null,
       map: null,
       hoveredStateId: null,
-      wasGoodId: null,
       zoom: 2,
       center: { lat: 0, lng: 0 },
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -104,7 +102,7 @@ export default {
             layout: {},
             paint: {
                 "fill-outline-color": "#ffffff",
-                "fill-color": ['case', ['boolean', ['feature-state', 'played'], false], goodColor, initColor],
+                "fill-color": ['case', ['boolean', ['feature-state', 'played'], false], "green", "orange"],
                 "fill-opacity": ['case', ['boolean', ['feature-state', 'hovered'], false], 0.7, 0.5]
             },
             "filter": ["==", "$type", "Polygon"]
@@ -116,8 +114,8 @@ export default {
             source: geojsonSourceId,
             layout: {},
             paint: {
-                "line-color": ['case', ['boolean', ['feature-state', 'wasGood'], false], "#ff0000", "#ffffff"],
-                "line-width": ['case', ['boolean', ['feature-state', 'wasGood'], false], 5, 2],
+                "line-color": "#ffffff",
+                "line-width": 2,
                 "line-opacity": 1
             },
             "filter": ["==", "$type", "Polygon"]
@@ -155,7 +153,7 @@ export default {
 
         var features = this.map.queryRenderedFeatures(e.point, { layers: [geojsonLayerId] })
         if(features.length > 0) {
-            var feature = features[0];
+            var feature = features[0]
             this.gameVue.onClic(feature)
         }
     },
@@ -186,21 +184,31 @@ export default {
         )
     },
     setWasGoodFeature(feature) {
+        this.unWasGoodFeature()
+
+        this.map.addSource(wasGoodSourceId, {
+            type: "geojson",
+            data: feature,
+            generateId: true
+        })
+
+        this.map.addLayer({
+            id: wasGoodLayerId,
+            type: "fill",
+            source: wasGoodSourceId,
+            layout: {},
+            paint: {
+                "fill-outline-color": "#ffffff",
+                "fill-color": "red",
+                "fill-opacity": 0.5
+            }
+        })
+
         this.zoomToFeature(feature)
-        this.wasGoodId = feature.id
-        this.map.setFeatureState(
-            { source: geojsonSourceId, id: this.wasGoodId },
-            { wasGood: true }
-        )
     },
     unWasGoodFeature() {
-        if(this.wasGoodId !== null) {
-            this.map.setFeatureState(
-                { source: geojsonSourceId, id: this.wasGoodId },
-                { wasGood: false }
-            )
-        }
-        this.wasGoodId = null
+        if(this.map.getLayer(wasGoodLayerId)) this.map.removeLayer(wasGoodLayerId)
+        if(this.map.getSource(wasGoodSourceId)) this.map.removeSource(wasGoodSourceId)
     },
     setLearningMode(active, field) {
         if(active) {
