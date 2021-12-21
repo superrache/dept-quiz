@@ -190,6 +190,7 @@ export default {
     },
     restart() {
       console.log('restart')
+      this.mapVue.setLearningMode(false, this.game.field)
       this.launch(this.game)
     },
     showHighscores() {
@@ -204,9 +205,7 @@ export default {
         this.playing = false
         this.dispPanel = false
         this.score = 'Mode apprentissage'
-        // TODO laisser le bouton appuyé
       } else {
-        // TODO lâcher le bouton
         this.restart()
       }
     }
