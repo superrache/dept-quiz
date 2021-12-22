@@ -3,7 +3,7 @@
       <Map id="map" ref="map"/>
 
       <Transition mode="out-in" name="score-update">
-        <div id="score" :key="score">{{ score }}</div>
+        <div id="score" :key="score" v-html="score"></div>
       </Transition>
 
       <div id="panel" class="floating-panel" v-show="dispPanel">
@@ -190,7 +190,10 @@ export default {
     },
     restart() {
       console.log('restart')
-      this.mapVue.setLearningMode(false, this.game.field)
+      if(this.learning) {
+        this.learning = false
+        this.mapVue.setLearningMode(false, this.game.field)
+      }
       this.launch(this.game)
     },
     showHighscores() {
@@ -204,7 +207,7 @@ export default {
       if(this.learning) {
         this.playing = false
         this.dispPanel = false
-        this.score = 'Mode apprentissage'
+        this.score = '&#129488;'
       } else {
         this.restart()
       }
