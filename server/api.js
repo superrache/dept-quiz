@@ -9,10 +9,9 @@ module.exports = function(app, databaseUrl, prod) {
 
     console.log('Database URL: ' + databaseUrl)
     if(databaseUrl === undefined) {
-        console.log('Error: database URL must be specified')
+        console.log('Error: environment variable DATABASE_URL must be specified')
         process.exit(1)
     }
-    const pg = require('pg')
 
     console.log('Initializing database')
 
