@@ -11,7 +11,7 @@
             v-for="g in games"
             :key="g.id"
             v-on:click="select($event, g)">
-          <img v-bind:src="require('./img/' + g.image)" />
+          <img :src="'/img/' + g.image" :alt="g.label" />
           <h3>{{ g.label }}</h3>
         </div>
       </div>
@@ -24,7 +24,6 @@
 
 <script>
 import Game from './components/Game.vue'
-import * as env from './utils/env.js'
 
 const appName = "dept-quiz" 
 
@@ -45,9 +44,7 @@ export default {
     this.game = this.$refs.game
   },
   async created() {
-    fetch(env.getServerUrl() + "/stat?feature=dept-quiz-main-menu")
-
-    const response = await fetch(env.getServerUrl() + "/games")
+    const response = await fetch("/data/games.json")
     const data = await response.json()
     this.games = data
 

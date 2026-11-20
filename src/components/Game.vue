@@ -26,7 +26,7 @@
       <div id="buttons" class="floating-panel">
         <button id="restart" v-on:click="restart()"><img src="../img/restart.svg" width=30 title="Redémarrer" /></button>
         <button id="learning" :class="{'activatedbutton': learning}" v-on:click="switchLearningMode()"><img src="../img/learn.svg" width=30 title="Mode apprentissage" /></button>
-        <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=30 title="Highscores" /></button>
+        <button id="showHighscores" v-on:click="showHighscores()"><img src="../img/cup.svg" width=30 title="Meilleurs scores" /></button>
         <button id="quit" v-on:click="quit()"><img src="../img/exit.svg" width=30 title="Quitter" /></button>
       </div>
 
@@ -44,7 +44,6 @@ import Map from './Map.vue'
 import Highscores from './Highscores.vue'
 import SaveScore from './SaveScore.vue'
 import Loading from './Loading.vue'
-import * as env from '../utils/env.js'
 
 export default {
   name: 'Game',
@@ -56,7 +55,7 @@ export default {
   },
   data() {
     return {
-      game: [],
+      game: null,
       question: "",
       result: "",
       score: 0,
@@ -92,12 +91,11 @@ export default {
     },
     async load() {
       console.log('loading geojson ' + this.game.geojson)
-      fetch(env.getServerUrl() + "/stat?feature=dept-quiz-" + this.game.id)
-      const response = await fetch(env.getServerUrl() + "/geojson?file=" + this.game.geojson)
+      const response = await fetch("/data/" + this.game.geojson)
       const data = await response.json()
       this.geojson = data
 
-      this.mapVue.loadGeojson(this.geojson)
+      await this.mapVue.loadGeojson(this.geojson)
 
       console.log(this.geojson.features.length + ' features loaded')
     },
@@ -177,7 +175,7 @@ export default {
     },
     end() {
       console.log('end of game')
-      this.result = "Game over"
+      this.result = "Partie terminée"
       this.playing = false
 
       // save high score
@@ -219,8 +217,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-@import '~maplibre-gl/dist/maplibre-gl.css';
 
 .container {
   margin: 0;

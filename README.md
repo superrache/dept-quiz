@@ -1,42 +1,33 @@
 # dept-quiz
 
-The game is here:
+Jeu de géographie : retrouve sur la carte les départements français, leurs numéros, leurs préfectures, les États américains, les provinces de RDC, etc.
 
-[https://dept-quiz.herokuapp.com/](https://dept-quiz.herokuapp.com/)
+Application 100 % statique (Vite + Vue 3 + MapLibre), déployée sur **Cloudflare Pages**.
 
-## Project setup
+## Développement
+
+Prérequis : Node.js 22 ou plus.
+
 ```
 npm install
+npm run dev       # serveur de dev sur http://localhost:5173
+npm run build     # build de production dans dist/
+npm run preview   # sert le build localement
 ```
 
-## Development
+Les données des jeux sont des fichiers statiques dans `public/data/` (`games.json` et les GeoJSON).
+Les images des jeux sont dans `public/img/`.
 
-A PostgreSQL database `test` has to be created before launching server
+Les requêtes `/api/*` (meilleurs scores) sont redirigées en dev vers `wrangler pages dev` (port 8788).
 
-### Run node.js server with hot-reloads
-```
-npm run express
-```
+## Fond de carte
 
-### Run vue app with hot-reloads
-```
-npm run serve
-```
+Le fond aquarelle Stamen Watercolor est servi par [Stadia Maps](https://stadiamaps.com/).
+En local, il fonctionne sans configuration. En production, il faut déclarer le domaine
+(`<projet>.pages.dev` et le domaine personnalisé) dans le tableau de bord Stadia (authentification par domaine).
 
-## Production
+## Déploiement (Cloudflare Pages)
 
-### Deployment
-
-Connect the repo to the app
-```
-heroku git:remote -a <heroku-app>
-```
-This command will push in the heroku git depo then build (`npm run build`) and deploy the app:
-```
-git push heroku main
-```
-
-Heroku uses the following command to start both front and backend
-```
-npm run start
-```
+- Commande de build : `npm run build`
+- Répertoire de sortie : `dist`
+- Variable d'environnement : `NODE_VERSION=22`

@@ -8,7 +8,8 @@
 
 <script>
 
-import { Map, NavigationControl } from 'maplibre-gl';
+import { markRaw } from 'vue'
+import { Map, NavigationControl } from 'maplibre-gl'
 import bbox from '@turf/bbox'
 import centroid from '@turf/centroid'
 
@@ -33,20 +34,27 @@ export default {
       hoveredStateId: null,
       zoom: 2,
       center: { lat: 0, lng: 0 },
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> '
+        + '&copy; <a href="https://stamen.com/" target="_blank">Stamen Design</a> '
+        + '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> '
+        + '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
     }
   },
   mounted() {
+    // Stamen Watercolor est désormais hébergé par Stadia Maps.
+    // Authentification par domaine : déclarer les domaines de prod dans le tableau de bord Stadia
+    // (localhost fonctionne sans configuration).
     const style = {
         version: 8,
-        glyphs: 'https://api.jawg.io/glyphs/{fontstack}/{range}.pbf',
+        glyphs: 'https://tiles.stadiamaps.com/fonts/{fontstack}/{range}.pbf',
         sources: {
             'raster-tiles': {
                 type: 'raster',
                 tiles: [
-                    'https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'
+                    'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'
                 ],
-                tileSize: 256
+                tileSize: 256,
+                maxzoom: 16
             }
         },
         layers: [
@@ -60,17 +68,31 @@ export default {
         ]
     }
 
-    this.map = new Map({
+    // markRaw : la carte ne doit pas être enveloppée dans un proxy réactif Vue
+    this.map = markRaw(new Map({
         container: this.$refs.map,
         style: style,
         center: [this.center.lng, this.center.lat],
         zoom: this.zoom
-      })
-    
+      }))
+    this.mapReady = new Promise(resolve => this.map.once('load', resolve))
+
     this.map.addControl(new NavigationControl(), 'top-right')
 
     this.map.on('click', this.onClic)
 
+    // Écouteurs enregistrés une seule fois (et non à chaque chargement de GeoJSON)
+    this.map.on('mousemove', geojsonLayerId, (e) => {
+        if(e.features.length > 0) {
+            this.map.getCanvas().style.cursor = "pointer"
+            this.highlightFeature(e.features[0])
+        }
+    })
+
+    this.map.on('mouseleave', geojsonLayerId, () => {
+        this.map.getCanvas().style.cursor = ""
+        this.unHighlightFeature()
+    })
   },
   methods: {
     setGameVue(gameVue) {
@@ -83,7 +105,10 @@ export default {
 
         this.geojson = null
     },
-    loadGeojson(geojson) {
+    async loadGeojson(geojson) {
+        await this.mapReady
+        this.unWasGoodFeature()
+        this.setLearningMode(false)
         this.removeCurrentGeojson()
 
         this.geojson = geojson
@@ -98,7 +123,6 @@ export default {
             id: geojsonLayerId,
             type: "fill",
             source: geojsonSourceId,
-            interactive: true,
             layout: {},
             paint: {
                 "fill-outline-color": "#ffffff",
@@ -120,18 +144,6 @@ export default {
             },
             "filter": ["==", "$type", "Polygon"]
         })
-
-        this.map.on('mousemove', geojsonLayerId, (e) => {
-            if(e.features.length > 0) {
-                this.map.getCanvas().style.cursor = "pointer" //crosshair
-                this.highlightFeature(e.features[0])
-            }
-        })
-
-        this.map.on('mouseleave', geojsonLayerId, () => {
-            this.map.getCanvas().style.cursor = ""
-            this.unHighlightFeature()
-        })
     },
     zoomToBounds(bounds) {
         this.map.fitBounds(bounds, {
@@ -139,9 +151,7 @@ export default {
         })
     },
     zoomToFeature(feature) {
-        console.log("zoomToFeature")
         var bounds = bbox(feature.geometry)
-        console.log(bounds)
         this.zoomToBounds(bounds)
     },
     zoomToFeatures() {
@@ -169,7 +179,7 @@ export default {
         )
     },
     unHighlightFeature() {
-        if(this.hoveredFeatureId !== null) {
+        if(this.hoveredStateId !== null) {
             this.map.setFeatureState(
                 { source: geojsonSourceId, id: this.hoveredStateId },
                 { hovered: false }
@@ -235,8 +245,7 @@ export default {
                 source: centroidSourceId,
                 layout: {
                     'text-font': [
-                        'Open Sans Bold',
-                        'Noto Bold'
+                        'Open Sans Bold'
                     ],
                     'text-field': ['get', field],
                     'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
@@ -262,8 +271,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-@import '~maplibre-gl/dist/maplibre-gl.css';
 
 li {
   cursor: pointer;

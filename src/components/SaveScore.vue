@@ -1,9 +1,10 @@
 <template>
   <div id="save-score" v-show="showSaveScore">
-      <h1 class="title">Save your score</h1>
-      <h2>You scored {{ score }} at {{ game.label }}</h2>
+      <h1 class="title">Enregistre ton score</h1>
+      <h2>Tu as marqué {{ score }} points à « {{ game?.label }} »</h2>
+      <p v-if="error">{{ error }}</p>
       <input id="input-player-name" type="text" 
-            placeholder="Enter your name" required 
+            placeholder="Ton nom" required 
             minLength=1 maxLength="25" size="14" 
             v-model="playerName"
             @keyup.enter="save()"/>
@@ -15,15 +16,14 @@
 </template>
 
 <script>
-import * as env from '../utils/env.js'
-
 export default {
   name: 'SaveScore',
   data() {
     return {
-      game: [],
+      game: null,
       score: 0,
-      playerName: "anonymous",
+      playerName: "anonyme",
+      error: null,
       showSaveScore: false
     }
   },
@@ -31,11 +31,24 @@ export default {
     show(game, score) {
         this.game = game
         this.score = score
+        this.error = null
         this.showSaveScore = true
     },
     async save() {
-        const response = await fetch(env.getServerUrl() + "/highscore?type=i&game=" + this.game.id + "&name=" + this.playerName + "&score=" + this.score)
-        await response.json()
+        const name = this.playerName.trim()
+        if(name.length === 0) return
+        try {
+            const response = await fetch("/api/scores", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ game: this.game.id, name, score: this.score })
+            })
+            if(!response.ok) throw new Error(response.status)
+        } catch(e) {
+            console.warn("enregistrement du score impossible", e)
+            this.error = "Impossible d'enregistrer le score pour le moment."
+            return
+        }
         this.showSaveScore = false
         this.$parent.showHighscores()
     },

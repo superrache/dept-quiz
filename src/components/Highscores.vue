@@ -1,12 +1,14 @@
 <template>
   <div id="highscores" class="title" v-show="showHighscores">
-      <h1>Highscores</h1>
-      <h2>{{ game.label }}</h2>
+      <h1>Meilleurs scores</h1>
+      <h2>{{ game?.label }}</h2>
+      <p v-if="error">{{ error }}</p>
+      <p v-else-if="players.length === 0">Aucun score enregistré pour le moment.</p>
       
       <div id="players">
         <table>
-          <tr v-for="p in players" :key="p.position">
-            <th id="player-position">{{ p.position }}</th>  
+          <tr v-for="(p, i) in players" :key="i">
+            <th id="player-position">{{ i + 1 }}</th>  
             <th id="player-name">{{ p.name }}</th>
             <th id="player-score">{{ p.score }}</th>
           </tr>
@@ -18,30 +20,31 @@
 </template>
 
 <script>
-import * as env from '../utils/env.js'
-
 export default {
   name: 'Highscores',
   data() {
     return {
-      game: [],
+      game: null,
       players: [],
+      error: null,
       showHighscores: false
     }
   },
   methods: {
     async show(game) {
         this.game = game
-        
-        const response = await fetch(env.getServerUrl() + "/highscore?type=s&game=" + game.id + "&ts=" + Date.now())
-        const data = await response.json()
-        this.players = data
-
-        for(var p in this.players) {
-            this.players[p].position = eval(p) + 1
-        }
-
+        this.players = []
+        this.error = null
         this.showHighscores = true
+
+        try {
+            const response = await fetch("/api/scores?game=" + encodeURIComponent(game.id), { cache: "no-store" })
+            if(!response.ok) throw new Error(response.status)
+            this.players = await response.json()
+        } catch(e) {
+            console.warn("highscores indisponibles", e)
+            this.error = "Les meilleurs scores sont indisponibles pour le moment."
+        }
     },
     close() {
       this.showHighscores = false
