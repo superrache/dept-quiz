@@ -8,7 +8,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "release": "standard-version"
+    "release": "standard-version",
+    "dev:api": "wrangler pages dev --port 8788",
+    "db:migrate:local": "wrangler d1 migrations apply dept-quiz --local",
+    "db:migrate:remote": "wrangler d1 migrations apply dept-quiz --remote",
+    "typecheck": "tsc -p functions",
+    "types": "wrangler types"
   },
   "dependencies": {
     "@turf/bbox": "^7.3.0",
@@ -21,7 +26,9 @@
     "@commitlint/config-conventional": "^15.0.0",
     "@vitejs/plugin-vue": "^6.0.0",
     "standard-version": "^9.3.2",
-    "vite": "^8.0.0"
+    "typescript": "^7.0.2",
+    "vite": "^8.0.0",
+    "wrangler": "^4.165.0"
   },
   "bugs": {
     "url": "https://github.com/superrache/dept-quiz/issues"

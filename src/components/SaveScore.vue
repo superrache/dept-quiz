@@ -43,7 +43,11 @@ export default {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ game: this.game.id, name, score: this.score })
             })
-            if(!response.ok) throw new Error(response.status)
+            if(!response.ok) {
+                const data = await response.json().catch(() => ({}))
+                this.error = "Score non enregistré : " + (data.error ?? "erreur " + response.status) + "."
+                return
+            }
         } catch(e) {
             console.warn("enregistrement du score impossible", e)
             this.error = "Impossible d'enregistrer le score pour le moment."

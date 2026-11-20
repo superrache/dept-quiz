@@ -4,6 +4,9 @@
         "label": "Les noms de départements français",
         "image": "affiche-departements-francais.jpg",
         "geojson": "departements.geojson",
+        "count": 96,
+        "count": 96,
+        "count": 96,
         "field": "nom",
         "typeLabel": "le département"
     },
@@ -12,6 +15,9 @@
         "label": "Les numéros de départements français",
         "image": "plaque-numero.jpg",
         "geojson": "departements.geojson",
+        "count": 96,
+        "count": 96,
+        "count": 96,
         "field": "code",
         "typeLabel": "le département"
     },
@@ -20,6 +26,9 @@
         "label": "Les préfectures de départements français",
         "image": "prefecture.jpg",
         "geojson": "departements.geojson",
+        "count": 96,
+        "count": 96,
+        "count": 96,
         "field": "prefecture",
         "typeLabel": "la préfecture"
     },
@@ -28,6 +37,7 @@
         "label": "Les noms des Etats-Unis",
         "image": "iStock-532961103.webp",
         "geojson": "us-states-simple.geojson",
+        "count": 52,
         "field": "NAME",
         "typeLabel": "l'état"
     },
@@ -36,6 +46,7 @@
         "label": "Les provinces de la République Démocratique du Congo",
         "image": "congo.webp",
         "geojson": "rd_congo_admin_4_provinces.geojson",
+        "count": 26,
         "field": "name",
         "typeLabel": "la province"
     },
@@ -44,6 +55,7 @@
         "label": "Les communes en Loire-Atlantique",
         "image": "Loire-Atlantique.jpg",
         "geojson": "communes-44-loire-atlantique.geojson",
+        "count": 208,
         "field": "nom",
         "typeLabel": "la commune"
     },
@@ -52,6 +64,7 @@
         "label": "Les divisions administratives du Royaume-Uni",
         "image": "uk.webp",
         "geojson": "uk.geojson",
+        "count": 41,
         "field": "ITL221NM",
         "typeLabel": "la région"
     }
