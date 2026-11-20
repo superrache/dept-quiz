@@ -26,7 +26,8 @@ npm run test:e2e      # tests de bout en bout Playwright (npx playwright install
 ```
 
 Les commits suivent [Conventional Commits](https://www.conventionalcommits.org/) (vérifié par commitlint via Husky).
-Les versions et le CHANGELOG sont gérés par release-please, à partir des commits de `main`.
+Les versions et le CHANGELOG sont gérés par standard-version, à partir des commits (Conventional Commits) :
+`npm run release`, puis `git push --follow-tags`.
 
 Les données des jeux sont des fichiers statiques dans `public/data/` (`games.json` et les GeoJSON).
 Les images des jeux sont dans `public/img/`.
