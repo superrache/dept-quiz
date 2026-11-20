@@ -8,26 +8,48 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "release": "standard-version",
     "dev:api": "wrangler pages dev --port 8788",
     "db:migrate:local": "wrangler d1 migrations apply dept-quiz --local",
     "db:migrate:remote": "wrangler d1 migrations apply dept-quiz --remote",
-    "typecheck": "tsc -p functions",
-    "types": "wrangler types"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p functions && tsc -p tests/unit",
+    "types": "wrangler types",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "prepare": "husky",
+    "data": "node scripts/build-data.mjs"
   },
   "dependencies": {
     "@turf/bbox": "^7.3.0",
     "@turf/centroid": "^7.3.0",
-    "maplibre-gl": "^5.19.0",
+    "maplibre-gl": "^6.19.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^15.0.0",
-    "@commitlint/config-conventional": "^15.0.0",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.0",
-    "standard-version": "^9.3.2",
-    "typescript": "^7.0.2",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "@vue/tsconfig": "^0.9.1",
+    "eslint": "^10.15.0",
+    "eslint-plugin-vue": "^10.12.1",
+    "globals": "^17.14.0",
+    "husky": "^9.1.7",
+    "mapshaper": "^0.8.5",
+    "prettier": "^3.10.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.73.0",
     "vite": "^8.0.0",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.1.1",
+    "vue-tsc": "^3.3.14",
     "wrangler": "^4.165.0"
   },
   "bugs": {
@@ -46,5 +68,10 @@
     "maplibre-gl-js",
     "cloudflare-pages"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "workbox-build": {
+      "glob": "^14.0.6"
+    }
+  }
 }

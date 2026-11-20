@@ -15,6 +15,19 @@ npm run build     # build de production dans dist/
 npm run preview   # sert le build localement
 ```
 
+### Qualité
+
+```
+npm run lint          # ESLint
+npm run format        # Prettier (format:check pour vérifier seulement)
+npm run typecheck     # vue-tsc + tsc (app, config, fonctions, tests)
+npm test              # tests unitaires Vitest
+npm run test:e2e      # tests de bout en bout Playwright (npx playwright install chromium au préalable)
+```
+
+Les commits suivent [Conventional Commits](https://www.conventionalcommits.org/) (vérifié par commitlint via Husky).
+Les versions et le CHANGELOG sont gérés par release-please, à partir des commits de `main`.
+
 Les données des jeux sont des fichiers statiques dans `public/data/` (`games.json` et les GeoJSON).
 Les images des jeux sont dans `public/img/`.
 
@@ -27,7 +40,6 @@ npm run db:migrate:local   # crée la base D1 locale (une fois, puis à chaque n
 npm run build              # wrangler sert dist/ + functions/
 npm run dev:api            # API sur http://localhost:8788
 npm run dev                # dans un autre terminal : Vite redirige /api vers le port 8788
-npm run typecheck          # vérifie le typage de la fonction
 ```
 
 - `GET /api/scores?game=<id>` renvoie le top 15 `[{ name, score }]`.
@@ -44,6 +56,20 @@ npm run typecheck          # vérifie le typage de la fonction
 Le fond aquarelle Stamen Watercolor est servi par [Stadia Maps](https://stadiamaps.com/).
 En local, il fonctionne sans configuration. En production, il faut déclarer le domaine
 (`<projet>.pages.dev` et le domaine personnalisé) dans le tableau de bord Stadia (authentification par domaine).
+
+## Données des jeux
+
+Les GeoJSON bruts sont dans `data/source/`. `npm run data` les simplifie avec mapshaper
+(champs utiles uniquement, géométries simplifiées, 4 décimales) et écrit le résultat dans `public/data/`.
+Pour ajouter un jeu : déposer le GeoJSON dans `data/source/`, ajouter l'entrée dans
+`public/data/games.json` (avec `count`), une image `public/img/<id>.webp`, puis lancer `npm run data` et `npm test`.
+
+## Application installable (PWA)
+
+Le build génère un service worker (`vite-plugin-pwa`). Le jeu s'installe et se joue hors ligne :
+l'app, les données et les images sont en précache, et les tuiles déjà vues restent en cache.
+Les meilleurs scores ne sont pas disponibles hors ligne. Le service worker n'est pas actif en `npm run dev` :
+pour le tester, utiliser `npm run build && npm run preview`.
 
 ## Déploiement (Cloudflare Pages)
 

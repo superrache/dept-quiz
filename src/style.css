@@ -1,0 +1,85 @@
+:root {
+  --blue: #4a78ec;
+  --blue-dark: #2f5fd0;
+  --blue-hover: #3e66cc;
+  --background: #343434;
+  --focus: #ffd54a;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--background);
+}
+
+#app {
+  width: 100%;
+  height: 100dvh;
+  color: white;
+  text-align: center;
+  user-select: none;
+}
+
+.title {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+button {
+  background-color: var(--blue);
+  border: 2px solid transparent;
+  border-radius: 11px;
+  padding: 0 10px;
+  cursor: pointer;
+  color: white;
+  font: inherit;
+  font-size: 1.5em;
+}
+
+button:hover {
+  background-color: var(--blue-hover);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Texte réservé aux lecteurs d'écran */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Fenêtres modales (meilleurs scores, enregistrement) */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  overflow: auto;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.85);
+}

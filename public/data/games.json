@@ -2,7 +2,7 @@
     {
         "id": "frenchDeptNames",
         "label": "Les noms de départements français",
-        "image": "affiche-departements-francais.jpg",
+        "image": "frenchDeptNames.webp",
         "geojson": "departements.geojson",
         "count": 96,
         "count": 96,
@@ -13,7 +13,7 @@
     {
         "id": "frenchDeptNums",
         "label": "Les numéros de départements français",
-        "image": "plaque-numero.jpg",
+        "image": "frenchDeptNums.webp",
         "geojson": "departements.geojson",
         "count": 96,
         "count": 96,
@@ -24,7 +24,7 @@
     {
         "id": "frenchDeptCity",
         "label": "Les préfectures de départements français",
-        "image": "prefecture.jpg",
+        "image": "frenchDeptCity.webp",
         "geojson": "departements.geojson",
         "count": 96,
         "count": 96,
@@ -35,7 +35,7 @@
     {
         "id": "usStateNames",
         "label": "Les noms des Etats-Unis",
-        "image": "iStock-532961103.webp",
+        "image": "usStateNames.webp",
         "geojson": "us-states-simple.geojson",
         "count": 52,
         "field": "NAME",
@@ -44,7 +44,7 @@
     {
         "id": "rdCongoProvNames",
         "label": "Les provinces de la République Démocratique du Congo",
-        "image": "congo.webp",
+        "image": "rdCongoProvNames.webp",
         "geojson": "rd_congo_admin_4_provinces.geojson",
         "count": 26,
         "field": "name",
@@ -53,7 +53,7 @@
     {
         "id": "city44",
         "label": "Les communes en Loire-Atlantique",
-        "image": "Loire-Atlantique.jpg",
+        "image": "city44.webp",
         "geojson": "communes-44-loire-atlantique.geojson",
         "count": 208,
         "field": "nom",
