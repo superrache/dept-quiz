@@ -1,0 +1,65 @@
+[
+    {
+        "id": "frenchDeptNames",
+        "label": "Les noms de départements français",
+        "image": "frenchDeptNames.webp",
+        "geojson": "departements.geojson",
+        "count": 96,
+        "field": "nom",
+        "typeLabel": "le département"
+    },
+    {
+        "id": "frenchDeptNums",
+        "label": "Les numéros de départements français",
+        "image": "frenchDeptNums.webp",
+        "geojson": "departements.geojson",
+        "count": 96,
+        "field": "code",
+        "typeLabel": "le département"
+    },
+    {
+        "id": "frenchDeptCity",
+        "label": "Les préfectures de départements français",
+        "image": "frenchDeptCity.webp",
+        "geojson": "departements.geojson",
+        "count": 96,
+        "field": "prefecture",
+        "typeLabel": "la préfecture"
+    },
+    {
+        "id": "usStateNames",
+        "label": "Les noms des Etats-Unis",
+        "image": "usStateNames.webp",
+        "geojson": "us-states-simple.geojson",
+        "count": 52,
+        "field": "NAME",
+        "typeLabel": "l'état"
+    },
+    {
+        "id": "rdCongoProvNames",
+        "label": "Les provinces de la République Démocratique du Congo",
+        "image": "rdCongoProvNames.webp",
+        "geojson": "rd_congo_admin_4_provinces.geojson",
+        "count": 26,
+        "field": "name",
+        "typeLabel": "la province"
+    },
+    {
+        "id": "city44",
+        "label": "Les communes en Loire-Atlantique",
+        "image": "city44.webp",
+        "geojson": "communes-44-loire-atlantique.geojson",
+        "count": 208,
+        "field": "nom",
+        "typeLabel": "la commune"
+    },
+    {
+        "id": "uk",
+        "label": "Les divisions administratives du Royaume-Uni",
+        "image": "uk.webp",
+        "geojson": "uk.geojson",
+        "count": 41,
+        "field": "ITL221NM",
+        "typeLabel": "la région"
+    }
+]

@@ -1,0 +1,11 @@
+name = "dept-quiz"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-11-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dept-quiz"
+# Remplacer par l'identifiant renvoyé par `npx wrangler d1 create dept-quiz`
+# (l'identifiant factice suffit pour le développement local)
+database_id = "8a9557b1-5cc3-41f7-b81d-faccaa7b959b"
+migrations_dir = "migrations"

@@ -1,0 +1,10 @@
+dist/
+coverage/
+playwright-report/
+test-results/
+public/data/
+package-lock.json
+worker-configuration.d.ts
+CHANGELOG.md
+.wrangler/
+data/source/

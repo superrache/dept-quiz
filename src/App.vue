@@ -1,182 +1,125 @@
-<template>
-  <div id="app">
-    <div id="menu" v-show="showMenu">
-      <h1 class="title">dept-quiz</h1>
-      
-      <h2>Choisis un jeu</h2>
+<script setup lang="ts">
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue'
+import type { GameConfig } from './types'
+import { locale, t } from './i18n'
+import { useOnline } from './composables/useOnline'
 
-      <div id="games">
-        
-        <div class="game" 
-            v-for="g in games"
-            :key="g.id"
-            v-on:click="select($event, g)">
-          <img v-bind:src="require('./img/' + g.image)" />
-          <h3>{{ g.label }}</h3>
-        </div>
-      </div>
-    </div>
+// Le jeu (et maplibre, ~1 Mo) n'est chargé qu'au lancement d'une partie
+const loadQuizGame = () => import('./components/QuizGame.vue')
+const QuizGame = defineAsyncComponent(loadQuizGame)
 
-    <Game ref="game" v-show="showGame"/>
+const games = ref<GameConfig[]>([])
+const selected = ref<GameConfig | null>(null)
+const error = ref<string | null>(null)
+const online = useOnline()
 
-  </div>
-</template>
+watchEffect(() => (document.documentElement.lang = locale.value))
 
-<script>
-import Game from './components/Game.vue'
-import * as env from './utils/env.js'
-
-const appName = "dept-quiz" 
-
-export default {
-  name: 'App',
-  components: {
-    Game
-  },
-  data() {
-    return {
-      showMenu: true,
-      showGame: true,
-      games: [],
-      game: null
-    }
-  },
-  mounted() {
-    this.game = this.$refs.game
-  },
-  async created() {
-    fetch(env.getServerUrl() + "/stat?feature=dept-quiz-main-menu")
-
-    const response = await fetch(env.getServerUrl() + "/games")
-    const data = await response.json()
-    this.games = data
-
-    this.showMenu = true
-    this.showGame = false
-
-    var gameParam = this.getUrlParameter("game")
-    if(gameParam !== null) {
-      for(var g in this.games) {
-        const game = this.games[g]
-        if(game.id === gameParam) {
-          this.select(null, game)
-        }
-      }
-    }
-  },
-  methods: {
-    select: function(event, game) {
-      console.log("select " + game.id)
-      this.showMenu = false
-      this.showGame = true
-      this.setUrlParameter("game", game.id)
-      this.game.launch(game)
-    },
-    quitGame() {
-      console.log("return to main menu")
-      this.showMenu = true
-      this.showGame = false
-      window.history.pushState(appName, "", "/")
-    },
-    getUrlParameter(name) {
-      const urlParams = new URLSearchParams(location.search)
-      const value = urlParams.get(name)
-      if(value !== undefined) return value
-      else return null
-    },
-    setUrlParameter(name, value) {
-      var title = appName + "? " + value
-      window.history.pushState(title, title, "/?" + name + "=" + value)
-    }
-  }
+/** Ouvre le jeu indiqué par `?game=` (ou le menu). */
+function syncFromUrl(): void {
+  const id = new URLSearchParams(location.search).get('game')
+  selected.value = games.value.find((g) => g.id === id) ?? null
 }
+
+function select(game: GameConfig): void {
+  selected.value = game
+  history.pushState(null, '', `/?game=${encodeURIComponent(game.id)}`)
+}
+
+function quit(): void {
+  selected.value = null
+  history.pushState(null, '', '/')
+}
+
+onMounted(async () => {
+  window.addEventListener('popstate', syncFromUrl)
+  try {
+    const response = await fetch('/data/games.json')
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    games.value = (await response.json()) as GameConfig[]
+    syncFromUrl()
+  } catch (e) {
+    console.error('liste des jeux indisponible', e)
+    error.value = t('app.gamesUnavailable')
+  }
+  // Précharge le jeu pendant que le joueur choisit
+  const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1500))
+  idle(() => void loadQuizGame())
+})
+
+onBeforeUnmount(() => window.removeEventListener('popstate', syncFromUrl))
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<template>
+  <QuizGame v-if="selected" :key="selected.id" :game="selected" @quit="quit" />
+
+  <main v-else id="menu">
+    <h1 class="title">dept-quiz</h1>
+    <h2>{{ t('app.chooseGame') }}</h2>
+    <p v-if="!online" class="notice" role="status">{{ t('app.offline') }}</p>
+    <p v-if="error" class="notice" role="alert">{{ error }}</p>
+
+    <div id="games">
+      <button v-for="g in games" :key="g.id" class="game-card" @click="select(g)">
+        <img :src="`/img/${g.image}`" alt="" width="400" height="260" />
+        <span class="game-label">{{ g.label }}</span>
+      </button>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+#menu {
+  min-height: 100%;
+  padding: 24px 16px;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: #343434;
-}
-
-#app {
-  user-select: none;
-  color: white;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-
-.title {
-  color: rgb(74, 120, 236);
-  font-weight: 700;
+.notice {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 213, 74, 0.15);
+  color: var(--focus);
 }
 
 #games {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-  background: transparent;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 24px;
+  max-width: 1200px;
   margin: 10px auto;
-  position: relative;
-  text-align:center;
 }
 
-.game {
-  width: 300px;
-  height: 300px;
-  margin: 20px;
+.game-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   padding: 20px;
-  cursor: pointer;
   background-color: rgba(74, 120, 236, 0.1);
-  border: 5px solid transparent;
+  border: 2px solid transparent;
   border-radius: 20px;
   box-shadow: 3px 3px 11px -3px #000000;
+  font-size: 1rem;
 }
 
-.game:hover {
+.game-card:hover {
   background-color: rgba(74, 120, 236, 0.5);
 }
 
-.game:active {
-  background-color: rgb(74, 120, 236);
+.game-card:active {
+  background-color: var(--blue);
 }
 
-.game h3 {
-  font-size: 16px;
+.game-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 400 / 260;
+  object-fit: contain;
 }
 
-.game img {
-  width: 70%;
-  height: 70%;
+.game-label {
+  font-weight: 700;
 }
-
-button {
-  background-color: rgb(74, 120, 236);
-  border-radius: 11px;
-  padding: 0px 10px 0px 10px;
-  text-decoration: none;
-  cursor: pointer;
-  color: white;
-  font-size: 1.5em;
-}
-
-button:hover {
-  background-color: rgb(62, 102, 204);
-  text-decoration: none;
-}
-
 </style>
