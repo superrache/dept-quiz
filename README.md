@@ -2,7 +2,7 @@
 
 Jeu de géographie : retrouve sur la carte les départements français, leurs numéros, leurs préfectures, les États américains, les provinces de RDC, etc.
 
-Application 100 % statique (Vite + Vue 3 + MapLibre), déployée sur **Cloudflare Pages**.
+Application statique (Vite + Vue 3 + MapLibre) et petite API de scores, déployées sur **Cloudflare Workers** (Worker avec fichiers statiques).
 
 ## Développement
 
@@ -32,13 +32,13 @@ Les versions et le CHANGELOG sont gérés par standard-version, à partir des co
 Les données des jeux sont des fichiers statiques dans `public/data/` (`games.json` et les GeoJSON).
 Les images des jeux sont dans `public/img/`.
 
-### API des meilleurs scores (Pages Function + D1)
+### API des meilleurs scores (Worker + D1)
 
-L'API est dans `functions/api/scores.ts`, la base D1 est décrite dans `migrations/`.
+L'API est dans `worker/scores.ts` (point d'entrée `worker/index.ts`), la base D1 est décrite dans `migrations/`.
 
 ```
 npm run db:migrate:local   # crée la base D1 locale (une fois, puis à chaque nouvelle migration)
-npm run build              # wrangler sert dist/ + functions/
+npm run build              # wrangler sert dist/ + le Worker
 npm run dev:api            # API sur http://localhost:8788
 npm run dev                # dans un autre terminal : Vite redirige /api vers le port 8788
 ```
@@ -56,7 +56,7 @@ npm run dev                # dans un autre terminal : Vite redirige /api vers le
 
 Le fond aquarelle Stamen Watercolor est servi par [Stadia Maps](https://stadiamaps.com/).
 En local, il fonctionne sans configuration. En production, il faut déclarer le domaine
-(`<projet>.pages.dev` et le domaine personnalisé) dans le tableau de bord Stadia (authentification par domaine).
+(`dept-quiz.<compte>.workers.dev` et le domaine personnalisé) dans le tableau de bord Stadia (authentification par domaine).
 
 ## Données des jeux
 
@@ -72,11 +72,16 @@ l'app, les données et les images sont en précache, et les tuiles déjà vues r
 Les meilleurs scores ne sont pas disponibles hors ligne. Le service worker n'est pas actif en `npm run dev` :
 pour le tester, utiliser `npm run build && npm run preview`.
 
-## Déploiement (Cloudflare Pages)
+## Déploiement (Cloudflare Workers)
+
+Le Worker est déployé par Workers Builds (intégration Git du dashboard Cloudflare) :
 
 - Commande de build : `npm run build`
-- Répertoire de sortie : `dist`
+- Commande de déploiement : `npx wrangler deploy`
 - Variable d'environnement : `NODE_VERSION=22`
+
+`wrangler.toml` sert `dist/` comme fichiers statiques et n'envoie au Worker que les requêtes `/api/*`.
+Déploiement manuel possible : `npm run build && npx wrangler deploy`.
 
 Première mise en place de la base :
 
@@ -86,4 +91,4 @@ npx wrangler d1 create dept-quiz      # reporter le database_id dans wrangler.to
 npm run db:migrate:remote
 ```
 
-Cloudflare Pages lit `wrangler.toml` et lie automatiquement la base D1 (binding `DB`) au projet.
+`wrangler deploy` lit `wrangler.toml` et lie la base D1 (binding `DB`) au Worker.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BONUS_STEP, INITIAL_BONUS, shuffle, useQuiz } from '../../src/composables/useQuiz'
-import { maxScore } from '../../functions/api/scores'
+import { maxScore } from '../../worker/scores'
 
 const answers = ['Ain', 'Aisne', 'Allier', 'Ardèche', 'Aube']
 

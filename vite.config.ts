@@ -65,7 +65,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1100,
   },
   server: {
-    // API des scores servie par `wrangler pages dev`
+    // API des scores servie par `wrangler dev`
     proxy: {
       '/api': 'http://localhost:8788',
     },
