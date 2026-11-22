@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cleanName, maxScore, onRequestGet, onRequestPost } from '../../functions/api/scores'
+import { cleanName, getScores, maxScore, postScores } from '../../worker/scores'
 
 /** Fausse base D1 : enregistre les requêtes et renvoie des résultats prédéfinis. */
 function fakeDb(options: { recent?: number; rows?: unknown[] } = {}) {
@@ -26,10 +26,9 @@ function fakeDb(options: { recent?: number; rows?: unknown[] } = {}) {
   return { executed, db: { prepare, batch } }
 }
 
-type Context = Parameters<typeof onRequestPost>[0]
-
-function context(request: Request, db: ReturnType<typeof fakeDb>['db']): Context {
-  return { request, env: { DB: db } } as unknown as Context
+/** Arguments d'un handler : la requête et un environnement avec la fausse base. */
+function context(request: Request, db: ReturnType<typeof fakeDb>['db']): [Request, Env] {
+  return [request, { DB: db } as unknown as Env]
 }
 
 function post(body: unknown, headers: Record<string, string> = {}): Request {
@@ -69,8 +68,8 @@ describe('GET /api/scores', () => {
   it('renvoie le classement du jeu', async () => {
     const rows = [{ name: 'Alice', score: 300 }]
     const { db, executed } = fakeDb({ rows })
-    const response = await onRequestGet(
-      context(new Request('https://dept-quiz.test/api/scores?game=uk'), db),
+    const response = await getScores(
+      ...context(new Request('https://dept-quiz.test/api/scores?game=uk'), db),
     )
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual(rows)
@@ -79,8 +78,8 @@ describe('GET /api/scores', () => {
 
   it('refuse un jeu inconnu', async () => {
     const { db } = fakeDb()
-    const response = await onRequestGet(
-      context(new Request('https://dept-quiz.test/api/scores?game=%25'), db),
+    const response = await getScores(
+      ...context(new Request('https://dept-quiz.test/api/scores?game=%25'), db),
     )
     expect(response.status).toBe(400)
   })
@@ -89,8 +88,8 @@ describe('GET /api/scores', () => {
 describe('POST /api/scores', () => {
   it('enregistre un score valide', async () => {
     const { db, executed } = fakeDb()
-    const response = await onRequestPost(
-      context(post({ game: 'uk', name: ' Bob ', score: maxScore(41) }), db),
+    const response = await postScores(
+      ...context(post({ game: 'uk', name: ' Bob ', score: maxScore(41) }), db),
     )
     expect(response.status).toBe(201)
     const insert = executed.find((s) => s.sql.startsWith('INSERT INTO scores'))
@@ -109,35 +108,35 @@ describe('POST /api/scores', () => {
     ['JSON null', null],
   ])('refuse : %s', async (_label, body) => {
     const { db, executed } = fakeDb()
-    const response = await onRequestPost(context(post(body), db))
+    const response = await postScores(...context(post(body), db))
     expect(response.status).toBe(400)
     expect(executed).toHaveLength(0)
   })
 
   it('refuse un JSON invalide', async () => {
     const { db } = fakeDb()
-    expect((await onRequestPost(context(post('{oops'), db))).status).toBe(400)
+    expect((await postScores(...context(post('{oops'), db))).status).toBe(400)
   })
 
   it('exige du JSON', async () => {
     const { db } = fakeDb()
-    const response = await onRequestPost(
-      context(post({ game: 'uk', name: 'a', score: 1 }, { 'Content-Type': 'text/plain' }), db),
+    const response = await postScores(
+      ...context(post({ game: 'uk', name: 'a', score: 1 }, { 'Content-Type': 'text/plain' }), db),
     )
     expect(response.status).toBe(415)
   })
 
   it('refuse une requête trop volumineuse', async () => {
     const { db } = fakeDb()
-    const response = await onRequestPost(
-      context(post({ game: 'uk', name: 'x'.repeat(2000), score: 1 }), db),
+    const response = await postScores(
+      ...context(post({ game: 'uk', name: 'x'.repeat(2000), score: 1 }), db),
     )
     expect(response.status).toBe(413)
   })
 
   it('limite le nombre d’envois par client', async () => {
     const { db, executed } = fakeDb({ recent: 10 })
-    const response = await onRequestPost(context(post({ game: 'uk', name: 'a', score: 1 }), db))
+    const response = await postScores(...context(post({ game: 'uk', name: 'a', score: 1 }), db))
     expect(response.status).toBe(429)
     expect(executed.some((s) => s.sql.startsWith('INSERT'))).toBe(false)
   })

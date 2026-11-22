@@ -1,10 +1,10 @@
 /**
- * API des meilleurs scores (Cloudflare Pages Function + D1)
+ * API des meilleurs scores (Cloudflare Worker + D1)
  *
  *   GET  /api/scores?game=<id>               → top 15 [{ name, score }]
  *   POST /api/scores  { game, name, score }  → 201 { ok: true }
  */
-import games from '../../public/data/games.json'
+import games from '../public/data/games.json'
 
 const TOP = 15
 const NAME_MAX = 25
@@ -46,7 +46,7 @@ async function clientKey(request: Request): Promise<string> {
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
+export async function getScores(request: Request, env: Env): Promise<Response> {
   const game = new URL(request.url).searchParams.get('game')
   if (!game || !counts.has(game)) return error(400, 'jeu inconnu')
 
@@ -58,7 +58,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   return json(results)
 }
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export async function postScores(request: Request, env: Env): Promise<Response> {
   if (!request.headers.get('Content-Type')?.startsWith('application/json')) {
     return error(415, 'JSON attendu')
   }

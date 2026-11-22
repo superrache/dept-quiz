@@ -8,10 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "dev:api": "wrangler pages dev --port 8788",
+    "dev:api": "wrangler dev --port 8788",
     "db:migrate:local": "wrangler d1 migrations apply dept-quiz --local",
     "db:migrate:remote": "wrangler d1 migrations apply dept-quiz --remote",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p functions && tsc -p tests/unit",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc -p tsconfig.node.json && tsc -p worker && tsc -p tests/unit",
     "types": "wrangler types",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -68,7 +68,7 @@
     "map",
     "maplibre",
     "maplibre-gl-js",
-    "cloudflare-pages"
+    "cloudflare-workers"
   ],
   "license": "MIT",
   "overrides": {

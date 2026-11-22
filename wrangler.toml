@@ -1,11 +1,14 @@
 name = "dept-quiz"
-pages_build_output_dir = "dist"
+main = "worker/index.ts"
 compatibility_date = "2026-11-01"
+
+# Fichiers statiques produits par `npm run build` ; le Worker ne reçoit que /api/*
+[assets]
+directory = "dist"
+run_worker_first = ["/api/*"]
 
 [[d1_databases]]
 binding = "DB"
 database_name = "dept-quiz"
-# Remplacer par l'identifiant renvoyé par `npx wrangler d1 create dept-quiz`
-# (l'identifiant factice suffit pour le développement local)
 database_id = "8a9557b1-5cc3-41f7-b81d-faccaa7b959b"
 migrations_dir = "migrations"
